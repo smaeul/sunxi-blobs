@@ -16,6 +16,18 @@ endif
 all: $(BOARD)/brom.bin $(BOARD)/brom.elf $(BOARD)/brom.s
 	$(M) DONE
 
+check:
+	$(M) CHECK "$(BOARD)/sections (addresses)"
+	$(Q) sort -cu $(BOARD)/sections
+	$(M) CHECK "$(BOARD)/sections (types)"
+	$(Q) test -z "$$(uniq -df1 $(BOARD)/sections)" || \
+		(echo "error: Consecutive sections of the same type!"; false)
+	$(M) CHECK "$(BOARD)/symbols (addresses)"
+	$(Q) sort -cu $(BOARD)/symbols
+	$(M) CHECK "$(BOARD)/symbols (names)"
+	$(Q) test -z "$$(sort -k2 $(BOARD)/symbols | uniq -df1)" || \
+		(echo "error: Duplicate symbol name!"; false)
+
 clean:
 	$(M) CLEAN $(BOARD)/brom
 	$(Q) rm -f $(BOARD)/brom.bin $(BOARD)/brom.elf $(BOARD)/brom.s

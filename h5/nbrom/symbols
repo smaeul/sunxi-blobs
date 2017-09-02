@@ -90,6 +90,7 @@
 0x00004dcc func_4dcc
 0x00004f5c load_from_sdcard
 0x00005000 load_from_emmc
+0x00005150 func_5150
 0x00005160 func_5160
 0x000051a0 func_51a0
 0x000051f8 func_51f8

@@ -151,7 +151,7 @@
 0x00007658 "DMA_BASE_REG~SPI"
 0x0000765c verify_header_magic
 0x000076a4 verify_header_checksum
-0x00007734 func_7734
+0x00007734 verify_header
 0x0000777c STAMP_VALUE
 0x00007780 udelay
 0x0000779c check_uboot

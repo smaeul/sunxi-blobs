@@ -13,7 +13,7 @@ M := @\#
 Q :=
 endif
 
-all: $(BOARD)/arisc.elf $(BOARD)/arisc.s $(BOARD)/callgraph.svg
+all: $(BOARD)/arisc.elf $(BOARD)/arisc.S $(BOARD)/callgraph.svg
 	$(M) DONE
 
 check:
@@ -30,8 +30,12 @@ check:
 
 clean:
 	$(M) CLEAN $(BOARD)
-	$(Q) rm -f $(BOARD)/arisc.bin $(BOARD)/arisc.elf $(BOARD)/arisc.s
+	$(Q) rm -f $(BOARD)/arisc.S $(BOARD)/arisc.bin $(BOARD)/arisc.elf $(BOARD)/arisc.s
 	$(Q) rm -f $(BOARD)/callgraph.dot $(BOARD)/callgraph.svg
+
+save:
+	$(M) SAVE $(BOARD)/comments
+	$(Q) test -f $(BOARD)/arisc.S && cut -c81- $(BOARD)/arisc.S > $(BOARD)/comments
 
 $(BOARD)/arisc.bin: $(BOARD)/arisc.hex
 	$(M) XXD $@
@@ -43,7 +47,11 @@ $(BOARD)/arisc.elf: $(BOARD)/arisc.bin $(BOARD)/sections $(BOARD)/symbols
 
 $(BOARD)/arisc.s: $(BOARD)/arisc.elf
 	$(M) OBJDUMP $@
-	$(Q) $(CROSS_COMPILE)objdump -d $^ > $@
+	$(Q) $(CROSS_COMPILE)objdump -d $^ | expand > $@
+
+$(BOARD)/arisc.S: $(BOARD)/arisc.s $(BOARD)/comments
+	$(M) PASTE $@
+	$(Q) paste $^ | expand -t 80,88 > $@
 
 $(BOARD)/callgraph.dot: $(BOARD)/arisc.s
 	$(M) CGRAPH $@

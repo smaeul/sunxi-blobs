@@ -7,14 +7,13 @@
 #
 
 # Adjust these as needed
-ARCH=arm
+ARCH=or1k
 BLOCK_SIZE=4096
-ENDIANNESS=little
 WORDSIZE=32
 
 # Generated, but might need adjustment
-BFDNAME=elf${WORDSIZE}-${ENDIANNESS}${ARCH}
-CROSS_COMPILE=${ARCH}-linux-musleabihf-
+BFDNAME=elf${WORDSIZE}-${ARCH}
+CROSS_COMPILE=${ARCH}-linux-musl-
 
 # Command-line parameters
 input_file=$1
@@ -39,7 +38,7 @@ elfify() {
     text) flags=alloc,code,contents,load,readonly ;;
   esac
   ${CROSS_COMPILE}objcopy -B "$ARCH" -I binary -O "$BFDNAME" \
-    --rename-section ".data=.${4},${flags}" "$1"
+    --rename-section ".data=.${4},${flags}" --reverse-bytes 4 "$1"
   # Remove start/end symbols added by objcopy
   ${CROSS_COMPILE}strip -s "$1"
 

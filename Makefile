@@ -13,7 +13,7 @@ M := @\#
 Q :=
 endif
 
-all: $(BOARD)/arisc.elf $(BOARD)/arisc.s
+all: $(BOARD)/arisc.elf $(BOARD)/arisc.s $(BOARD)/callgraph.svg
 	$(M) DONE
 
 check:
@@ -29,8 +29,9 @@ check:
 		(echo "error: Duplicate symbol name!"; false)
 
 clean:
-	$(M) CLEAN $(BOARD)/arisc
+	$(M) CLEAN $(BOARD)
 	$(Q) rm -f $(BOARD)/arisc.bin $(BOARD)/arisc.elf $(BOARD)/arisc.s
+	$(Q) rm -f $(BOARD)/callgraph.dot $(BOARD)/callgraph.svg
 
 $(BOARD)/arisc.bin: $(BOARD)/arisc.hex
 	$(M) XXD $@
@@ -43,3 +44,11 @@ $(BOARD)/arisc.elf: $(BOARD)/arisc.bin $(BOARD)/sections $(BOARD)/symbols
 $(BOARD)/arisc.s: $(BOARD)/arisc.elf
 	$(M) OBJDUMP $@
 	$(Q) $(CROSS_COMPILE)objdump -d $^ > $@
+
+$(BOARD)/callgraph.dot: $(BOARD)/arisc.s
+	$(M) CGRAPH $@
+	$(Q) scripts/callgraph $^ $@
+
+$(BOARD)/callgraph.svg: $(BOARD)/callgraph.dot
+	$(M) DOT $@
+	$(Q) dot -T svg $^ > $@

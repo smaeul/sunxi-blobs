@@ -13,7 +13,7 @@ M := @\#
 Q :=
 endif
 
-all: $(BOARD)/arisc.elf $(BOARD)/arisc.S $(BOARD)/callgraph.svg
+all: $(BOARD)/arisc.data $(BOARD)/arisc.elf $(BOARD)/arisc.S $(BOARD)/callgraph.svg
 	$(M) DONE
 
 check:
@@ -30,7 +30,7 @@ check:
 
 clean:
 	$(M) CLEAN $(BOARD)
-	$(Q) rm -f $(BOARD)/arisc.S $(BOARD)/arisc.bin $(BOARD)/arisc.elf $(BOARD)/arisc.s
+	$(Q) rm -f $(BOARD)/arisc.S $(BOARD)/arisc.bin $(BOARD)/arisc.data $(BOARD)/arisc.elf $(BOARD)/arisc.s
 	$(Q) rm -f $(BOARD)/callgraph.gv $(BOARD)/callgraph.svg
 
 save:
@@ -44,6 +44,10 @@ $(BOARD)/arisc.bin: $(BOARD)/arisc.hex
 $(BOARD)/arisc.elf: $(BOARD)/arisc.bin $(BOARD)/sections $(BOARD)/symbols
 	$(M) BIN2ELF $@
 	$(Q) scripts/bin2elf $^ $@
+
+$(BOARD)/arisc.data: $(BOARD)/arisc.elf
+	$(M) OBJDUMP $@
+	$(Q) $(CROSS_COMPILE)objdump -s -j .0x00010114 $^ > $@
 
 $(BOARD)/arisc.s: $(BOARD)/arisc.elf
 	$(M) OBJDUMP $@

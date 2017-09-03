@@ -3,8 +3,8 @@
 # See LICENSE in the project directory for license terms.
 #
 
-BOARD		 = h5/normal
-CROSS_COMPILE	 = arm-linux-musleabihf-
+BOARD		 = sun50iw1p1
+CROSS_COMPILE	 = or1k-linux-musl-
 
 M := @printf '  %-7s %s\n'
 Q := @
@@ -13,7 +13,7 @@ M := @\#
 Q :=
 endif
 
-all: $(BOARD)/brom.bin $(BOARD)/brom.elf $(BOARD)/brom.s
+all: $(BOARD)/arisc.elf $(BOARD)/arisc.s
 	$(M) DONE
 
 check:
@@ -29,17 +29,17 @@ check:
 		(echo "error: Duplicate symbol name!"; false)
 
 clean:
-	$(M) CLEAN $(BOARD)/brom
-	$(Q) rm -f $(BOARD)/brom.bin $(BOARD)/brom.elf $(BOARD)/brom.s
+	$(M) CLEAN $(BOARD)/arisc
+	$(Q) rm -f $(BOARD)/arisc.bin $(BOARD)/arisc.elf $(BOARD)/arisc.s
 
-$(BOARD)/brom.bin: $(BOARD)/brom.hex
+$(BOARD)/arisc.bin: $(BOARD)/arisc.hex
 	$(M) XXD $@
 	$(Q) xxd -r $^ $@
 
-$(BOARD)/brom.elf: $(BOARD)/brom.bin $(BOARD)/sections $(BOARD)/symbols
+$(BOARD)/arisc.elf: $(BOARD)/arisc.bin $(BOARD)/sections $(BOARD)/symbols
 	$(M) BIN2ELF $@
 	$(Q) scripts/bin2elf $^ $@
 
-$(BOARD)/brom.s: $(BOARD)/brom.elf
+$(BOARD)/arisc.s: $(BOARD)/arisc.elf
 	$(M) OBJDUMP $@
 	$(Q) $(CROSS_COMPILE)objdump -d $^ > $@

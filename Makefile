@@ -42,4 +42,4 @@ $(BOARD)/brom.elf: $(BOARD)/brom.bin $(BOARD)/sections $(BOARD)/symbols
 
 $(BOARD)/brom.s: $(BOARD)/brom.elf
 	$(M) OBJDUMP $@
-	$(Q) $(CROSS_COMPILE)objdump -D $^ > $@
+	$(Q) $(CROSS_COMPILE)objdump -d $^ > $@

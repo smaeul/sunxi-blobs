@@ -23,10 +23,10 @@ caller=unknown
 
 cat > "$output_file" << "EOF"
 strict digraph calls {
+  graph [nodesep = 0.5, ranksep = 3]
   layout = dot
   node [height = 1, shape = box]
   rankdir = TB
-  ratio = 0.2
   splines = ortho
 EOF
 grep -F -e '>:' -e "$CALL_INSN" -e "$TAIL_INSN" "$input_file" |

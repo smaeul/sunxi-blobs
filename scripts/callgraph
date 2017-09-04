@@ -36,6 +36,8 @@ while read -r line; do
   elif [[ $line =~ ^.*${INSN}\ 0x([[:xdigit:]]+)$ ]]; then
     printf '  %s -> %s\n' "$caller" "func_${BASH_REMATCH[1]}" >> "$output_file"
   elif [[ $line =~ ^.*${INSN}\ [[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+    test "${BASH_REMATCH[1]}" = "__udivsi3" && continue
+    test "${BASH_REMATCH[1]}" = "printf" && continue
     printf '  %s -> %s\n' "$caller" "${BASH_REMATCH[1]}" >> "$output_file"
   fi
 done

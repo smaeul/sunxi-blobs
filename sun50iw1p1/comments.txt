@@ -77,88 +77,76 @@
 
 
 
+; int cpucfg_set_power_switch(int enable);
 
 
+; if (enable != 0) {
 
 
 
+;     ptr = 0x01f01540 [R_PRCM_PWR_CLAMP_REG(0, 0)]
+;     reg = *ptr
+;     if (reg == 0) {
 
 
+;         level = 2
+;         msg = 0x00010960 "cpu%d power switch enable already"
+;         goto print
+;     }
+;     reg = 0xfe
+;     *ptr = reg
+;     timer_udelay(20)
 
+;     reg = 0xf8
+;     *ptr = reg
+;     timer_udelay(10)
 
+;     reg = 0xe0
+;     *ptr = reg
+;     timer_udelay(10)
 
+;     reg = 0xc0
+;     *ptr = reg
+;     timer_udelay(10)
 
+;     reg = 0x80
+;     *ptr = reg
+;     timer_udelay(10)
 
+;     reg = 0x0
+;     *ptr = reg
+;     timer_udelay(20)
 
-; msg = 0x00010960 "cpu%d power switch enable already"
+;     while (*ptr != 0x0)
+;         /* spin */
 
 
 
+; } else {
 
+;     ptr = 0x01f01540 [R_PRCM_PWR_CLAMP_REG(0, 0)]
+;     reg = *ptr
+;     if (reg == 0xff) {
 
 
 
+;         msg = 0x00010983 "cpu%d power switch disable already"
+;         level = 2
+; print:  printf(level, msg, <missingno>)
 
 
+;     } else {
+;         reg = 0xff
+;         *ptr = reg
+;         timer_udelay(30)
 
+;         while (*ptr != 0xff)
+;             /* spin */
 
+;     }
+; }
+; ret = 0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-; msg = 0x00010983 "cpu%d power switch disable already"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-; ptr3 = 0x00012260
-; var2 = 0
-
-; *ptr3 = var2
-
-; ret = var2
 ; return ret
 
 
@@ -177,37 +165,49 @@
 
 
 
+; ptr3 = 0x00012260
+; var2 = 0
+
+; *ptr3 = var2
+
+; ret = var2
+; return ret
 
 
+; int cpucfg_set_ss_flag(void);
 
 
+; ptr = 0x01f01da0 [R_CPUCFG_SS_FLAG_REG]
+; flag = 0x16aaefe8
+; ret = 0
+; *ptr = flag
+
+; flag = 0xaa16efe8
+; *ptr = flag
+; return ret
 
 
+; int cpucfg_clear_ss_flag(void);
+
+; flag = 0x16aa0000
+; ptr = 0x01f01da0 [R_CPUCFG_SS_FLAG_REG]
+; ret = 0
+; *ptr = flag
+; flag = 0xaa160000
+; *ptr = flag
+; return ret
 
 
+; u32 cpucfg_get_status(u32 mpidr);
+; mpidr >>= 2
 
+; if (mpidr != 0)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+;     ptr = 0x01700034 [CPUCFG_CPU_STS_REG(1)]
+; else
+;     ptr = 0x01700030 [CPUCFG_CPU_STS_REG(0)]
+; ret = *ptr
+; return ret
 
 
 
@@ -256,383 +256,387 @@
 
 
 
+; int cpucfg_set_cpu_state(u32 cpu, int flag);
+; cluster = cpu >> 2
 
 
+; flag &= BIT(0) // 0 = assert, 1 = deassert
+; if (cluster != 0) {
 
+;     cpu -= 4
+;     ptr = 0x01700084 [CPUCFG_RST_CTRL_REG(1)]
+;     reg = *ptr
+;     orig = reg
 
+; } else {
 
 
+;     ptr = 0x01700080 [CPUCFG_RST_CTRL_REG(0)]
+;     reg = *ptr
+;     orig = reg
+; }
 
+; ret = 0
+; reg = BIT(cpu)
+; new = flag << cpu
+; mask = ~reg
+; reg = mask & orig
 
 
+; new |= reg
 
 
+; *ptr = new
+; return ret
 
 
+; void cnt64_clear(void);
 
 
+; ptr = 0x01f01e80 [CNT64_CTRL_REG]
+; ret = 0
+; reg = *ptr
 
 
+; reg |= BIT(0)
 
 
+; *ptr = reg
+; return ret
 
 
+; unsigned long long cnt64_read(void);
 
 
+; ptr = 0x01f01e80 [CNT64_CTRL_REG]
+; reg = *ptr
 
 
+; reg |= BIT(1)
 
 
+; *ptr = reg
+; while (*ptr & BIT(1) != 0)
+;     /* spin */
 
 
 
+; loptr = 0x01f01e84 [CNT64_LOW_REG]
+; hiptr = 0x01f01e88 [CNT64_HIGH_REG]
+; loreg = *loptr
 
+; hireg = *hiptr
 
+; ret = hireg
+; ret_hi = loreg
+; return (unsigned long long) (ret_hi, ret)
 
 
+; int cpucfg_set_ss_entry(u32 addr);
 
+; ret = 0
+; ptr = 0x01f01da8 [R_CPUCFG_SS_ENTRY_REG]
+; *ptr = addr
+; return ret
 
 
+; void cpucfg_set_acinactm(u32 val);
 
 
+; ptr = 0x01700004 [CPUCFG_CLS_CTRL_REG1(0)]
 
+; reg = *ptr
+; mask = ~BIT(0)
 
+; val &= BIT(0)
 
+; reg &= mask
 
 
+; val |= reg
 
 
+; *ptr = val
 
+; return
 
 
+; void cpucfg_wait_cluster_idle(void);
 
+; ptr = 0x01700030 [CPUCFG_CPU_STS_REG(0)]
+; do {var4 = *ptr
+;     var4 &= BIT(0)
+; } while (var4 == 0)
 
 
+; return
 
 
+; void cpucfg_set_l2rstdisable(u32 val);
+; ptr = 0x01700000 [CPUCFG_CLS_CTRL_REG0(0)]
 
+; reg = *ptr
 
+; mask = 0xffffffe0
 
+; val &= 0x0000001f
 
+; reg &= mask
 
 
+; val |= reg
 
 
+; *ptr = val
 
+; return
 
 
+; void cpucfg_set_cluster_state(int enable);
 
 
+; if (flag != 0)
 
 
+;     if (flag != 1)
+;         goto err
 
 
 
+; if (enable == 0) {
 
+;     ptr = 0x01700080 [CPUCFG_RST_CTRL_REG(0)]
+;     mask = 0xfff0ffff
+;     reg = *ptr
 
 
+;     reg &= mask // assert undocumented reset
 
 
+;     mask = 0xff0fffff
 
+;     *ptr = reg
+;     reg = *ptr
 
 
+;     reg &= mask // assert MBIST_RST
+;     m2 = 0xfffffff0
 
 
+;     *ptr = reg
 
+;     p2 = 0x01f01c30 [R_CPUCFG_PONRESET_REG(0)]
+;     r2 = *p2
 
 
+;     r2 &= m2 // assert cpu0-3 PONRESET
 
 
+;     mask = ~BIT(24)
 
+;     *p2 = r2
+;     reg = *ptr // back to changing 0x01700080
 
 
+;     reg &= mask // assert SOC_DBG_RST
+;     mask = ~BIT(8)
 
 
+;     *ptr = reg
+;     reg = *ptr
 
 
+;     reg &= mask // assert L2_RST
+;     mask = ~BIT(12)
 
 
+;     *ptr = reg
+;     reg = *ptr
 
 
+; DS  reg &= mask // assert HRESET
+; } else {
+;     mask = BIT(24)
+;     ptr = 0x01700080 [CPUCFG_RST_CTRL_REG(0)]
+;     reg = *ptr
 
 
+;     reg |= BIT(12) // deassert HRESET
 
 
+;     *ptr = reg
+;     reg = *ptr
 
 
+;     reg |= BIT(8) // deassert L2_RST
 
 
+;     *ptr = reg
+;     reg = *ptr
 
 
+;     reg |= mask // deassert SOC_DBG_RST
+;     mask = 0x00f00000
 
 
+;     *ptr = reg
 
+;     p2 = 0x01f01c30 [R_CPUCFG_PONRESET_REG(0)]
+;     r2 = *p2
 
 
+;     r2 |= BIT(0) // deassert cpu0 PONRESET
 
 
+;     *p2 = r2
+;     reg = *ptr // back to changing 0x01700080
 
 
+;     reg |= mask // deassert MBIST_RST
+;     mask = 0x000f0000
 
 
+;     *ptr = reg
+;     reg = *ptr
 
 
+;     reg |= mask // deassert undocumented reset
+; }
 
+; *ptr = reg
 
 
+; return
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; err:
 
 ; msg = 0x000109ca "invalid cluster reset status"
 
+; return printf(2, msg);
 
 
+; void cpucfg_suspend_cluster(void);
 
 
 
 
 
+; cpucfg_set_cpu_state(0, 0) // assert cpu0
+; mask = ~BIT(0)
 
+; ptr = 0x01f01c30 [R_CPUCFG_PONRESET_REG(0)]
+; reg = *ptr
 
 
+; reg &= mask // assert cpu0 PONRESET
 
 
+; *ptr = reg
+; cpucfg_set_acinactm(1) // disable snooping
 
+; rtc_set_pwrstate(0x0000b000)
 
+; cpucfg_wait_cluster_idle()
 
+; rtc_set_pwrstate(0x0000b001)
 
 
+; cpucfg_set_cpu_state(0, 0) // assert cpu0
 
 
+; cpucfg_set_cpu_state(1, 0) // assert cpu1
 
 
+; cpucfg_set_cpu_state(2, 0) // assert cpu2
 
 
+; cpucfg_set_cpu_state(3, 0) // assert cpu3
 
 
 
 
+; return rtc_set_pwrstate(0x0000b002)
 
 
+; int cpucfg_disable_cluster(void);
 
 
+; cpucfg_set_cluster_state(0)
 
+; rtc_set_pwrstate(0x0000b003)
 
 
+; cpucfg_func_00009c00(5, 1)
 
 
+; cpucfg_func_00009c00(4, 1)
 
+; rtc_set_pwrstate(0x0000b004)
 
+; cpucfg_set_power_switch(0)
 
 
 
+; return rtc_set_pwrstate(0x0000b005)
 
 
+; int cpucfg_enable_cluster(void);
 
 
+; cpucfg_set_power_switch(1)
 
+; rtc_set_pwrstate(0x0000b006)
 
 
+; cpucfg_func_00009c00(5, 0)
 
 
+; cpucfg_func_00009c00(4, 0)
 
+; rtc_set_pwrstate(0x0000b007)
 
+; cpucfg_set_acinactm(0) // enable snooping
 
+; rtc_set_pwrstate(0x0000b00a)
 
 
+; cpucfg_set_cpu_state(0, 0) // assert cpu0
 
+; rtc_set_pwrstate(0x0000b008)
 
+; cpucfg_set_cluster_state(1)
 
+; rtc_set_pwrstate(0x0000b009)
 
 
 
+; return 0
 
 
+; int cpucfg_resume_cpu0(void *entry);
 
 
 
 
+; cpucfg_set_l2rstdisable(0)
 
+; rtc_set_pwrstate(0x0000b00b)
 
 
 
+; ptr = 0x01f01da8 [R_CPUCFG_SS_ENTRY_REG]
+; *ptr = entry
+; rtc_set_pwrstate(0x0000b00c)
 
 
+; cpucfg_set_cpu_state(0, 3) // deassert cpu0
 
+; rtc_set_pwrstate(0x0000b00d)
 
 
+; ret = 0
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; return ret
 
 
 
@@ -1998,6 +2002,7 @@
 
 
 
+; return rtc_set_pwrstate(0x00009007)
 
 
 
@@ -2011,8 +2016,7 @@
 
 
 
-
-
+; return rtc_set_pwrstate(0x00009007)
 
 
 
@@ -2825,7 +2829,7 @@
 
 
 
-
+; int register_isr(u32 index, u32 isr, u32 arg2);
 
 
 
@@ -2837,46 +2841,48 @@
 
 ; msg = 0x00010ba3 "install isr %x"
 
+; printf(1, msg, arg2)
+
+; offset = index << 3
+
+; ret = 0
+; base = 0x000123b0
+; ptr = offset + base
+; *ptr = isr
+; *(ptr + 4) = arg2
 
 
 
 
+; return ret
+
+
+; int unregister_isr(u32 index, u32 isr);
+
+
+; offset = index << 3
+; base = 0x000123b0
+
+; ptr = offset + base
+; old = *ptr
+; if (old == isr)
 
 
 
+;     zero = 0
+;     new = 0x000068a8
+;     *(ptr + 4) = zero
+;     *ptr = new
+;     return 0
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; printf(4, msg)
 ; msg = 0x00010bb3 "ISR not installed!"
+; ret = -1
 
 
-
-
+; return ret
 
 
 
@@ -4309,6 +4315,8 @@
 
 
 
+
+
 ; msg = 0x00010cf8 "NMI irq coming..."
 
 
@@ -4332,6 +4340,8 @@
 
 
 ; msg = 0x00010d21 "allocate message for nmi int notify failed"
+
+
 
 
 
@@ -5384,16 +5394,18 @@
 
 
 
+; void rtc_set_pwrstate(u32 val);
+
+; ptr = 0x0140010c [R_RTC_GP_DATA_REG(3)]
+; *ptr = val
+; return
 
 
+; u32 rtc_get_pwrstate(void);
 
-
-
-
-
-
-
-
+; ptr = 0x0140010c [R_RTC_GP_DATA_REG(3)]
+; ret = *ptr
+; return ret
 
 
 
@@ -5842,6 +5854,10 @@
 
 
 ; msg = 0x00010fa7 "invaid module clock id (%d) when set divider"
+
+
+
+
 
 
 
@@ -7389,6 +7405,8 @@
 
 
 
+
+
 ; msg = 0x00011291 "24m hosc will power-off notify"
 
 
@@ -7425,6 +7443,8 @@
 
 
 ; msg = 0x000112b1 "24m hosc power-on ready notify"
+
+
 
 
 
@@ -7783,6 +7803,30 @@
 
 
 
+; void timer_udelay(u32 usecs);
+
+
+
+
+; if (usecs == 0)
+;     return
+
+; (time_hi, time_lo) = cnt64_read()
+; end_hi = 1
+; // arg0 * 2
+; // arg0 * 3
+; cycles = usecs * 24
+; end_lo = time_lo + cycles
+; if (end_lo >= time_lo)
+
+
+;     end_hi = 0
+; end_hi += time_hi
+; do {
+;     (time_hi, time_lo) = cnt64_read()
+; } while (end_hi > time_hi ||
+;         (end_hi == time_hi &&
+;             end_lo > time_lo))
 
 
 
@@ -7790,31 +7834,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; return
 
 
 
@@ -7916,7 +7936,7 @@
 ;     return ret
 
 ; ptr4 = 0x01f0287c [R_UART_USR]
-; while ((*ptr4 & 2) == 0)
+; while ((*ptr4 & BIT(1)) == 0)
 ;     /* spin */
 
 
@@ -8129,12 +8149,12 @@
 
 
 
+; void delay(u32 cycles);
+; while (cycles-- != 0)
+;     /* spin */
 
-
-
-
-
-
+; cycles += 1
+; return
 
 
 
@@ -8324,7 +8344,7 @@
 ; int strlen(char *str);
 ; end = str
 ; do {
-;
+
 ;     end += 1
 ; } while ((c = *(char *)end) != 0)
 ; end -= 1
@@ -8869,23 +8889,23 @@
 
 
 
+; void dram_set_crc_params(u32 a, u32 b, u32 c);
 
 
+; ptr = 0x000121cc
+; *ptr = a
 
+; ptr = 0x00011db0
+; *ptr = b
 
+; ptr = 0x00011db4
+; return
+; DS *ptr = c
 
+; u32 get_0x121cc(void);
 
-
-
-
-
-
-
-
-
-
-
-
+; ptr = 0x000121cc
+; return *ptr
 
 
 
@@ -8975,7 +8995,7 @@
 
 
 
-; uint32_t disable_interrupts();
+; u32 disable_interrupts(void);
 
 ; mask = 0xfffffff9
 ; addr = SPR_SR
@@ -8987,7 +9007,7 @@
 ; return old
 
 
-; void restore_interrupts(uint32_t value);
+; void restore_interrupts(u32 value);
 ; addr = SPR_SR
 ; write_spr(addr, value)
 ; return void
@@ -9021,7 +9041,7 @@
 
 
 
-
+; ptr = 0x00011dd4 <array of char* exc types>
 
 
 
@@ -9096,7 +9116,7 @@
 
 
 
-; uint32_t get_0x121e4(void);
+; u32 get_0x121e4(void);
 
 ; ptr3 = 0x000121e4
 ; ret = *ptr3
@@ -9383,6 +9403,8 @@
 
 
 
+; ptr = 0x000124f4
+; return *(ptr + 0x10)
 
 
 
@@ -9397,24 +9419,7 @@
 
 
 
-
-
-; msg = 0x000117b2 ""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; msg = 0x000117b2 "" <whitespace>
 
 
 
@@ -9432,6 +9437,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+; ret = 0
+; return ret
 
 ; int putc(char c);
 ; ret = 0
@@ -9462,7 +9482,7 @@
 ; return 0
 
 
-; int printf(uint32_t mask, char *fmtstr, ...);
+; int printf(u32 mask, char *fmtstr, ...);
 
 
 
@@ -9487,7 +9507,7 @@
 ; ptr2 = 0x00011e18
 ; var22 = ret
 ; var2 = *ptr2
-;
+
 ; if (var2 != 0) {
 
 ;     ret = get_0x121e4()
@@ -9675,7 +9695,7 @@
 ; return ret
 
 
-; int set_debug_mask(uint32_t mask)
+; int set_debug_mask(u32 mask);
 
 
 
@@ -9700,20 +9720,20 @@
 
 
 
+; ptr = 0x000121f4
+; var4 = *ptr
+; if (arg0 < var4)
+;     return 0
+; ret = 0
+
+; ptr = 0x000121f8
+; var5 = *ptr
+; if (arg0 < var5)
+;     return 1
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+; ret = 0
+; return ret
 
 
 
@@ -10069,7 +10089,7 @@
 ; msg = 0x0001190e "copy esstandby code"
 
 
-
+; rtc_set_pwrstate(0xf3f30000)
 
 
 
@@ -10283,6 +10303,8 @@
 
 
 
+
+
 ; msg = 0x00011a82 "allocate notifier failed"
 
 
@@ -10338,26 +10360,44 @@
 
 
 
+; int ???(??? *arg0, ??? arg1, ??? arg2);
 
 
 
 
+; var16 = arg1
 
+; var14 = arg2
+; ptr = *arg0
+; while (ptr != NULL) {
+;     funcptr = *(ptr + 4)
+;     (*funcptr)(arg1, arg2)
 
+;     ptr = *(ptr + 8)
 
 
+; }
 
+; ret = 0
 
 
 
+; return ret
 
 
+; void icache_flush(void);
 
 
 
 
 
 
+; step = 16
+; addr = 0
+; limit = 4096
+; do {
+;     <invalidate icache at addr>
+; } while ((addr += step) != limit)
 
 
 
@@ -10858,6 +10898,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f31000)
 
 
 
@@ -10868,24 +10909,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; rtc_set_pwrstate(0xf3f31001)
 
 
 
@@ -10920,7 +10944,9 @@
 
 
 
+; rtc_set_pwrstate(0xf3f32000)
 
+; rtc_set_pwrstate(0xf3f33001)
 
 
 
@@ -10941,15 +10967,18 @@
 
 
 
+; rtc_set_pwrstate(0xf3f33002)
 
 
 
 
 
+; rtc_set_pwrstate(0xf3f33003)
 
 
 
 
+; rtc_set_pwrstate(0xf3f33004)
 
 
 
@@ -10969,6 +10998,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f33005)
 
 
 
@@ -10976,6 +11006,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f33006)
 
 
 
@@ -11017,16 +11048,19 @@
 
 
 
+; rtc_set_pwrstate(0xf3f33007)
 
 
 
 
 
 
+; rtc_set_pwrstate(0xf3f33008)
 
 
 
 
+; rtc_set_pwrstate(0xf3f33009)
 
 
 
@@ -11693,6 +11727,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f3300a)
 
 
 
@@ -11730,6 +11765,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f3300b)
 
 
 
@@ -11814,23 +11850,11 @@
 
 
 
+; rtc_set_pwrstate(0xf3f3300c)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; rtc_set_pwrstate(0xf3f34000)
 
 
 
@@ -11896,7 +11920,7 @@
 
 
 
-
+; rtc_set_pwrstate(0xf3f35000)
 
 
 
@@ -12096,12 +12120,14 @@
 
 
 
+; rtc_set_pwrstate(0xf3f36000)
 
 
 
 
 
 
+; rtc_set_pwrstate(0xf3f37001)
 
 
 
@@ -12166,6 +12192,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f37002)
 
 
 
@@ -12204,6 +12231,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f37003)
 
 
 
@@ -12623,10 +12651,12 @@
 
 
 
+; rtc_set_pwrstate(0xf3f37004)
 
 
 
 
+; rtc_set_pwrstate(0xf3f37005)
 
 
 
@@ -12665,13 +12695,7 @@
 
 
 
-
-
-
-
-
-
-
+; rtc_set_pwrstate(0xf3f3900f)
 
 
 
@@ -12681,6 +12705,15 @@
 
 
 
+; rtc_set_pwrstate(0xf3f37006)
+
+
+
+
+
+
+
+; rtc_set_pwrstate(0xf3f37007)
 
 
 
@@ -12700,6 +12733,7 @@
 
 
 
+; rtc_set_pwrstate(0xf3f37008)
 
 
 
@@ -12709,29 +12743,19 @@
 
 
 
+; rtc_set_pwrstate(0xf3f37009)
 
 
 
 
 
+; rtc_set_pwrstate(0xf3f3700a)
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+; rtc_set_pwrstate(0xf3f3700b)
 
 
 
@@ -12776,16 +12800,16 @@
 
 
 
+; rtc_set_pwrstate(0xf3f3700c)
 
 
 
 
 
+; rtc_set_pwrstate(0xf3f3700d)
 
 
-
-
-
+; rtc_set_pwrstate(0xf3f38000)
 
 
 
@@ -12797,6 +12821,14 @@
 
 
 ; msg = 0x000101d7 "%x return"
+
+
+
+
+
+
+
+
 
 
 

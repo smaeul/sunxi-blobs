@@ -8,7 +8,8 @@
 
 # Adjust these as needed
 ARCH=or1k
-INSN="l.jal"
+CALL_INSN="l.jal"
+TAIL_INSN="l.j"
 
 # Generated, but might need adjustment
 CROSS_COMPILE=${ARCH}-linux-musl-
@@ -28,17 +29,17 @@ strict digraph calls {
   ratio = 0.2
   splines = ortho
 EOF
-grep -F -e '>:' -e "$INSN" "$input_file" |
+grep -F -e '>:' -e "$CALL_INSN" -e "$TAIL_INSN" "$input_file" |
 while read -r line; do
   if [[ $line =~ ^[[:xdigit:]]{8}\ \<([[:alnum:]_]+)\>:$ ]]; then
     caller=${BASH_REMATCH[1]}
     printf '  %s\n' "$caller" >> "$output_file"
-  elif [[ $line =~ ^.*${INSN}\ 0x([[:xdigit:]]+)$ ]]; then
-    printf '  %s -> %s\n' "$caller" "func_${BASH_REMATCH[1]}" >> "$output_file"
-  elif [[ $line =~ ^.*${INSN}\ [[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
-    test "${BASH_REMATCH[1]}" = "__udivsi3" && continue
-    test "${BASH_REMATCH[1]}" = "printf" && continue
+  elif [[ $line =~ ^.*${CALL_INSN}\ [[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+    [[ ${BASH_REMATCH[1]} = __udivsi3 || ${BASH_REMATCH[1]} = printf ]] && continue
     printf '  %s -> %s\n' "$caller" "${BASH_REMATCH[1]}" >> "$output_file"
+  elif [[ $line =~ ^.*${TAIL_INSN}\ [[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+    [[ ${BASH_REMATCH[1]} = __udivsi3 || ${BASH_REMATCH[1]} = printf ]] && continue
+    printf '  %s -> %s [style = dashed]\n' "$caller" "${BASH_REMATCH[1]}" >> "$output_file"
   fi
 done
 printf '}\n' >> "$output_file"

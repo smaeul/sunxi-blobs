@@ -5396,14 +5396,14 @@
 
 ; void rtc_set_pwrstate(u32 val);
 
-; ptr = 0x0140010c [R_RTC_GP_DATA_REG(3)]
+; ptr = 0x01f0010c [R_RTC_GP_DATA_REG(3)]
 ; *ptr = val
 ; return
 
 
 ; u32 rtc_get_pwrstate(void);
 
-; ptr = 0x0140010c [R_RTC_GP_DATA_REG(3)]
+; ptr = 0x01f0010c [R_RTC_GP_DATA_REG(3)]
 ; ret = *ptr
 ; return ret
 

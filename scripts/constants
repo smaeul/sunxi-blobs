@@ -1,0 +1,32 @@
+#!/bin/bash -eu
+#
+# Copyright © 2017 Samuel Holland <samuel@sholland.org>
+# See LICENSE in the project directory for license terms.
+#
+# bash is required for regular expression matching.
+#
+
+# Adjust these as needed
+ARCH=or1k
+
+# Generated, but might need adjustment
+CROSS_COMPILE=${ARCH}-linux-musl-
+
+# Command-line parameters
+input_file=$1
+
+# Internal variables
+declare -A registers
+
+cut -c 33- "$input_file" |
+while read -r line; do
+  if [[ $line =~ ^l\.movhi\ r([[:digit:]]+),(0x[[:xdigit:]]+)$ ]]; then
+    registers[${BASH_REMATCH[1]}]=$((BASH_REMATCH[2] * 65536))
+  elif [[ $line =~ ^l\.ori\ r([[:digit:]]+),r([[:digit:]]+),(0x[[:xdigit:]]+)$ \
+      && ${BASH_REMATCH[1]} -eq ${BASH_REMATCH[2]} ]]; then
+    registers[${BASH_REMATCH[1]}]=$((registers[${BASH_REMATCH[1]}] + BASH_REMATCH[3]))
+    printf '0x%08x\n' "${registers[${BASH_REMATCH[1]}]}"
+  elif [[ $line =~ ^l\.[[:alpha:]]+\ r([[:digit:]]+), ]]; then
+    registers[${BASH_REMATCH[1]}]=0
+  fi
+done

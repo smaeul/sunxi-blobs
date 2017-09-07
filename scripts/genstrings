@@ -1,0 +1,15 @@
+#!/bin/bash -eu
+#
+# Copyright © 2017 Samuel Holland <samuel@sholland.org>
+# See LICENSE in the project directory for license terms.
+#
+# bash is only required for hexadecimal math.
+#
+
+strings -d -t x "$1" |
+while read -r addr msg
+do
+  printf '%8s  ; msg = 0x%08x "%s"\n' \
+    "$(printf '0x%x' "$((0x${addr} - 0x10034))")" \
+    "$((0x${addr} - 0x34))" "$msg"
+done

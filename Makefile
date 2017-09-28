@@ -3,8 +3,21 @@
 # See LICENSE in the project directory for license terms.
 #
 
-BOARD		 = a64/arisc_tinalinux
-CROSS_COMPILE	 = or1k-linux-musl-
+CROSS_aarch64	 = aarch64-linux-musl-
+CROSS_arm	 = arm-linux-musleabi-
+CROSS_or1k	 = or1k-linux-musl-
+
+BLOBS		 = $(sort $(wildcard */*/blob.hex))
+CHECKS		 = $(addsuffix .checked,$(DIRS))
+COMMENTS	 = $(addsuffix comments,$(DIRS))
+DIRS		 = $(dir $(BLOBS))
+OUTPUT		 = $(foreach d,$(DIRS),$(d)annotated.s $(d)blob.s $(d)callgraph.svg)
+SECTIONS	 = $(addsuffix sections,$(DIRS))
+SYMBOLS		 = $(addsuffix symbols,$(DIRS))
+
+arch		 = $(if $(findstring arisc,$(lastword $(1:/= ))),or1k,arm)
+cross_compile	 = $(CROSS_$(call arch,$(1)))
+env		 = env ARCH=$(call arch,$(1)) CROSS_COMPILE=$(call cross_compile,$(1))
 
 M := @printf '  %-7s %s\n'
 Q := @
@@ -13,50 +26,56 @@ M := @\#
 Q :=
 endif
 
-all: $(BOARD)/arisc.elf $(BOARD)/arisc.S $(BOARD)/callgraph.svg
-	$(M) DONE
+all: $(OUTPUT)
 
-check:
-	$(M) CHECK "$(BOARD)/sections (addresses)"
-	$(Q) sort -cu $(BOARD)/sections
-	$(M) CHECK "$(BOARD)/sections (types)"
-	$(Q) test -z "$$(uniq -df1 $(BOARD)/sections)" || \
-		(echo "error: Consecutive sections of the same type!"; false)
-	$(M) CHECK "$(BOARD)/symbols (addresses)"
-	$(Q) sort -cu $(BOARD)/symbols
-	$(M) CHECK "$(BOARD)/symbols (names)"
-	$(Q) test -z "$$(sort -k2 $(BOARD)/symbols | uniq -df1)" || \
-		(echo "error: Duplicate symbol name!"; false)
+check: $(CHECKS)
 
 clean:
-	$(M) CLEAN $(BOARD)
-	$(Q) rm -f $(BOARD)/arisc.S $(BOARD)/arisc.bin $(BOARD)/arisc.elf $(BOARD)/arisc.s
-	$(Q) rm -f $(BOARD)/callgraph.dot $(BOARD)/callgraph.svg
+	$(M) CLEAN
+	$(Q) rm -f */*/.checked */*/annotated.s */*/blob.bin */*/blob.elf */*/blob.s
+	$(Q) rm -f */*/callgraph.dot */*/callgraph.svg
 
-save:
-	$(M) SAVE $(BOARD)/comments
-	$(Q) test -f $(BOARD)/arisc.S && cut -c81- $(BOARD)/arisc.S > $(BOARD)/comments
+save: $(COMMENTS)
 
-$(BOARD)/arisc.bin: $(BOARD)/arisc.hex
+%/.checked: %/sections %/symbols
+	$(M) CHECK $*
+	$(Q) sort -cu $*/sections
+	$(Q) test -z "$$(uniq -df1 $*/sections)" || \
+		(echo "error: Consecutive sections of the same type!"; false)
+	$(Q) sort -cu $*/symbols
+	$(Q) test -z "$$(sort -k2 $*/symbols | uniq -df1)" || \
+		(echo "error: Duplicate symbol name!"; false)
+
+%/annotated.s: %/blob.s %/comments
+	$(M) PASTE $@
+	$(Q) paste $^ > $@.tmp && expand -t88,90 $@.tmp > $@
+	$(Q) rm -f $@.tmp
+
+%/blob.bin: %/blob.hex
 	$(M) XXD $@
 	$(Q) xxd -r $^ $@
 
-$(BOARD)/arisc.elf: $(BOARD)/arisc.bin $(BOARD)/sections $(BOARD)/symbols
+%/blob.elf: %/blob.bin %/sections %/symbols
 	$(M) BIN2ELF $@
-	$(Q) scripts/bin2elf $^ $@
+	$(Q) $(call env,$*) scripts/bin2elf $^ $@
 
-$(BOARD)/arisc.s: $(BOARD)/arisc.elf
+%/blob.s: %/blob.elf
 	$(M) OBJDUMP $@
-	$(Q) $(CROSS_COMPILE)objdump -d $^ | expand > $@
+	$(Q) $(call cross_compile,$*)objdump -d $^ > $@.tmp && expand -t11,12 $@.tmp > $@
+	$(Q) rm -f $@.tmp
 
-$(BOARD)/arisc.S: $(BOARD)/arisc.s $(BOARD)/comments
-	$(M) PASTE $@
-	$(Q) paste $^ | expand -t 80,88 > $@
-
-$(BOARD)/callgraph.dot: $(BOARD)/arisc.s
+%/callgraph.dot: %/blob.s
 	$(M) CGRAPH $@
-	$(Q) scripts/callgraph $^ $@
+	$(Q) $(call env,$*) scripts/callgraph $^ $@
 
-$(BOARD)/callgraph.svg: $(BOARD)/callgraph.dot
+%/callgraph.svg: %/callgraph.dot
 	$(M) DOT $@
 	$(Q) dot -T svg $^ > $@
+
+%/comments: %
+	$(M) SAVE $@
+	$(Q) { test $*/annotated.s -nt $@ && cut -c89- $*/annotated.s > $@; } || touch $@
+
+.PHONY: all check clean save
+.SECONDARY:
+.SUFFIXES:

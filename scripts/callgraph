@@ -7,12 +7,20 @@
 #
 
 # Adjust these as needed
-ARCH=or1k
-CALL_INSN="l.jal"
-TAIL_INSN="l.j"
+ARCH=${ARCH:-or1k}
+CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
 
 # Generated, but might need adjustment
-CROSS_COMPILE=${ARCH}-linux-musl-
+case "$ARCH" in
+	arm)
+		CALL_INSN=bl
+		TAIL_INSN=b
+		;;
+	or1k)
+		CALL_INSN=l.jal
+		TAIL_INSN=l.j
+		;;
+esac
 
 # Command-line parameters
 input_file=$1
@@ -35,11 +43,11 @@ while read -r line; do
     caller=${BASH_REMATCH[1]}
     [[ $caller =~ ^__.+si3$ || $caller =~ ^nop_ ]] && continue
     printf '  %s\n' "$caller" >> "$output_file"
-  elif [[ $line =~ ^.*${CALL_INSN}\ [[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+  elif [[ $line =~ ^.*\ ${CALL_INSN}\ +[[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
     callee=${BASH_REMATCH[1]}
     [[ $callee =~ ^__.+si3$ || $callee = printf ]] && continue
     printf '  %s -> %s\n' "$caller" "$callee" >> "$output_file"
-  elif [[ $line =~ ^.*${TAIL_INSN}\ [[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+  elif [[ $line =~ ^.*\ ${TAIL_INSN}\ +[[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
     callee=${BASH_REMATCH[1]}
     [[ $callee =~ ^__.+si3$ || $callee = printf ]] && continue
     printf '  %s -> %s [style = dashed]\n' "$caller" "$callee" >> "$output_file"

@@ -7,13 +7,23 @@
 #
 
 # Adjust these as needed
-ARCH=or1k
+ARCH=${ARCH:-or1k}
 BLOCK_SIZE=4096
-WORDSIZE=32
+CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
 
 # Generated, but might need adjustment
-BFDNAME=elf${WORDSIZE}-${ARCH}
-CROSS_COMPILE=${ARCH}-linux-musl-
+case "$ARCH" in
+  or1k) ENDIANNESS=big ;;
+  *)    ENDIANNESS=little ;;
+esac
+case "$ARCH" in
+  *64*) WORDSIZE=64 ;;
+  *)    WORDSIZE=32 ;;
+esac
+case "$ARCH" in
+  arm)  BFDNAME=elf${WORDSIZE}-${ENDIANNESS}${ARCH} ;;
+  *)    BFDNAME=elf${WORDSIZE}-${ARCH} ;;
+esac
 
 # Command-line parameters
 input_file=$1
@@ -37,8 +47,12 @@ elfify() {
     data) flags=alloc,contents,data,load,readonly ;;
     text) flags=alloc,code,contents,load,readonly ;;
   esac
+  case "$ENDIANNESS" in
+    big)    reverse="--reverse-bytes $((WORDSIZE / 8))" ;;
+    little) reverse= ;;
+  esac
   ${CROSS_COMPILE}objcopy -B "$ARCH" -I binary -O "$BFDNAME" \
-    --rename-section ".data=.${4},${flags}" --reverse-bytes 4 "$1"
+    --rename-section ".data=.${4},${flags}" $reverse "$1"
   # Remove start/end symbols added by objcopy
   ${CROSS_COMPILE}strip -s "$1"
 

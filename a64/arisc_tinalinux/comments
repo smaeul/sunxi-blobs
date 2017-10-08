@@ -2299,6 +2299,8 @@
 
 
 
+
+
 ; msg = 0x00010a8a "send syn message : %x"
 
 
@@ -3443,6 +3445,8 @@
 
 
 ; msg = 0x00010c73 "inv ir rx irq det, st:0x%x"
+
+
 
 
 
@@ -7920,6 +7924,8 @@
 
 
 
+
+
 ; int r_uart_putc(char c);
 
 
@@ -9447,14 +9453,14 @@
 
 
 
+; return 0
 
 
 
-; ret = 0
-; return ret
+; return 0
+
 
 ; int putc(char c);
-; ret = 0
 
 
 
@@ -12821,15 +12827,6 @@
 
 
 ; msg = 0x000101d7 "%x return"
-
-
-
-
-
-
-
-
-
 
 
 

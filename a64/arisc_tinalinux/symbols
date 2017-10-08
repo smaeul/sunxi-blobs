@@ -44,6 +44,7 @@
 0x00005e64 hwmsgbox_isr
 0x00005ff4 func_00005ff4
 0x00006044 hwmsgbox_init
+0x00006140 nop_zero_0
 0x00006148 func_00006148
 0x000062f4 func_000062f4
 0x00006418 func_00006418
@@ -79,10 +80,11 @@
 0x00007634 func_00007634
 0x0000788c func_0000788c
 0x00007934 pmu_func_00007934
+0x000079e0 func_000079e0
 0x00007a68 func_00007a68
 0x00007b3c pmu_func_00007b3c
 0x00007c14 func_00007c14
-0x00007c7c pmu_func_00007c7c
+0x00007c7c pmu_set_voltage
 0x00007e48 nmi_func_00007e48
 0x00007fe8 pmu_nmi_isr
 0x000080c8 func_000080c8
@@ -112,7 +114,7 @@
 0x00009d70 func_00009d70
 0x00009d90 func_00009d90
 0x00009e2c func_00009e2c
-0x00009ef4 func_00009ef4
+0x00009ef4 clock_func_00009ef4
 0x0000a0a0 func_0000a0a0
 0x0000a0d8 func_0000a0d8
 0x0000a2c0 func_0000a2c0
@@ -137,6 +139,7 @@
 0x0000b588 nop_zero_2
 0x0000b590 nop_zero_3
 0x0000b598 uart_init
+0x0000b6a4 nop_zero_4
 0x0000b6ac uart_putc
 0x0000b714 uart_gets
 0x0000b780 uart_puts
@@ -144,7 +147,7 @@
 0x0000ba20 delay
 0x0000ba38 func_0000ba38
 0x0000bb68 func_0000bb68
-0x0000bc54 func_0000bc54
+0x0000bc58 func_0000bc58
 0x0000bd00 strlen
 0x0000bd20 strcpy
 0x0000bd48 func_0000bd48
@@ -157,8 +160,8 @@
 0x0000c440 func_0000c440
 0x0000c488 func_0000c488
 0x0000c538 dram_set_crc_params
-0x0000c564 get_0x121cc
-0x0000c574 func_0000c574
+0x0000c564 dram_get_crc_params
+0x0000c574 dram_crc_func_0000c574
 0x0000c68c func_0000c68c
 0x0000c6c0 disable_interrupts
 0x0000c6e8 restore_interrupts
@@ -175,8 +178,8 @@
 0x0000ccb8 get_0x12504
 0x0000ccc8 func_0000ccc8
 0x0000cd48 console_init
-0x0000cd60 console_exit
-0x0000cd68 putc
+0x0000cd64 console_exit
+0x0000cd6c putc
 0x0000cd90 gets
 0x0000cda8 puts
 0x0000cdc4 printf

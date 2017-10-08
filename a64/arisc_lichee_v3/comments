@@ -109,7 +109,43 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ; msg = 0x00011c74 "WRN:cpu%d power switch disable already"
+
+
+
+
+
+
+
+
 
 
 
@@ -382,6 +418,10 @@
 
 
 
+
+
+
+
 ; msg = 0x00011cc3 "WRN:invalid cluster reset status"
 
 
@@ -460,7 +500,7 @@
 
 
 
-
+; cpucfg_set_power_switch(0, 0, 0)
 
 
 
@@ -903,6 +943,8 @@
 
 
 ; msg = 0x00011ce5 "ERR:PLL_DDR1 unlocked,system reset needed"
+
+
 
 
 
@@ -3227,6 +3269,8 @@
 
 
 
+
+
 ; msg = 0x00011d7d "ERR:ISR not installed!"
 
 
@@ -3803,7 +3847,7 @@
 
 
 
-
+; ptr3 = 0x1f02e18 [PL_EINT_DEB_REG]
 
 
 
@@ -5184,6 +5228,12 @@
 
 
 
+
+
+
+
+
+
 ; msg = 0x00011e6f "reset system"
 
 
@@ -5494,9 +5544,13 @@
 
 
 
+; ptr4 = 0x1f01400 [R_PRCM_BASE_REG]
 
 
 
+
+
+; ptr3 = 0x1c20000 [CCU_BASE_REG]
 
 
 
@@ -6030,6 +6084,8 @@
 
 
 ; msg = 0x00011ecb "WRN:invaid module clock id (%d) when set divider"
+
+
 
 
 
@@ -7770,6 +7826,10 @@
 
 
 
+
+
+
+
 ; msg = 0x00012172 "WRN:timer irq handler not install"
 
 
@@ -7922,6 +7982,16 @@
 
 
 ; msg = 0x00012195 "WRN:no free timer now"
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8974,6 +9044,8 @@
 
 
 
+
+
 ; msg = 0x000121c1 "ERR:dvfs try to increase voltage failed"
 
 
@@ -9541,6 +9613,8 @@
 
 
 
+
+
 ; msg = 0x000123ba "WRN:allocate message for init fb failed"
 
 
@@ -9693,6 +9767,14 @@
 
 
 ; msg = 0x0001240d ""
+
+
+
+
+
+
+
+
 
 
 
@@ -10530,6 +10612,38 @@
 
 
 ; msg = 0x0001245a "WRN:allocate notifier failed"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -12,14 +12,14 @@ CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
 
 # Generated, but might need adjustment
 case "$ARCH" in
-	arm)
-		CALL_INSN=bl
-		TAIL_INSN=b
-		;;
-	or1k)
-		CALL_INSN=l.jal
-		TAIL_INSN=l.j
-		;;
+  arm)
+    CALL_INSN=bl
+    TAIL_INSN=b
+    ;;
+  or1k)
+    CALL_INSN=l.jal
+    TAIL_INSN=l.j
+    ;;
 esac
 
 # Command-line parameters

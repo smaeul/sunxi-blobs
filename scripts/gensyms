@@ -1,0 +1,66 @@
+#!/bin/sh -eu
+#
+# Copyright © 2017 Samuel Holland <samuel@sholland.org>
+# See LICENSE in the project directory for license terms.
+#
+# Requires GNU sort or compatible for hexadecimal sorting.
+#
+
+# Adjust these as needed
+ARCH=${ARCH:-or1k}
+CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
+
+# Generated, but might need adjustment
+case "$ARCH" in
+  arm)
+    CALL_INSN=bl
+    TAIL_INSN=b
+    ;;
+  or1k)
+    CALL_INSN=l.jal
+    TAIL_INSN=l.j
+    ;;
+esac
+
+# Command-line parameters
+dir=$1
+
+# Internal variables
+assembly=${dir}/blob.s
+symbols=${dir}/symbols
+
+# Usage: warn <message>
+warn() {
+  printf 'warning: %s\n' "$*" >&2
+}
+
+if [ "$(stat -c %s "$symbols" || echo 0)" -gt 0 ]; then
+  warn "Existing symbols for ${dir} would be overwritten! Quitting."
+  exit 1
+fi
+
+# Ensure the disassembled file exists
+make "$assembly"
+
+# Add all normally-called functions
+grep "${CALL_INSN}\s" "$assembly" | sed "s/^.*${CALL_INSN}\s//" | sort -gu |
+while read -r addr; do
+  printf '0x%08x func_%08x\n' "$addr" "$addr"
+done > "$symbols"
+
+# Update the disassembly
+make "$assembly"
+
+# Add all tail-called functions (from the last instruction of another function)
+grep -B3 '^[[:xdigit:]]\{8\} <[[:alnum:]_]\+>:$' "$assembly" |
+grep "${TAIL_INSN}\s" | sed "s/^.*${TAIL_INSN}\s\([[:xdigit:]]\+\)\s.*$/0x\1/" |
+sort -gu |
+while read -r addr; do
+  printf '0x%08x func_%08x\n' "$addr" "$addr"
+done >> "$symbols"
+
+# Merge the symbols
+sort -go "$symbols" -u "$symbols"
+
+# Build everything with the new symbols
+make BLOB="$dir"

@@ -7,7 +7,8 @@ CROSS_aarch64	 = aarch64-linux-musl-
 CROSS_arm	 = arm-linux-musleabi-
 CROSS_or1k	 = or1k-linux-musl-
 
-BLOBS		 = $(sort $(wildcard */*/blob.hex))
+BLOB		?= */*
+BLOBS		 = $(sort $(wildcard $(BLOB)/blob.hex))
 CHECKS		 = $(addsuffix .checked,$(DIRS))
 COMMENTS	 = $(addsuffix comments,$(DIRS))
 DIRS		 = $(dir $(BLOBS))
@@ -31,9 +32,9 @@ all: $(OUTPUT)
 check: $(CHECKS)
 
 clean:
-	$(M) CLEAN
-	$(Q) rm -f */*/.checked */*/annotated.s */*/blob.bin */*/blob.elf */*/blob.s
-	$(Q) rm -f */*/callgraph.dot */*/callgraph.svg
+	$(M) CLEAN "$(BLOB)"
+	$(Q) rm -f $(BLOB)/.checked $(BLOB)/annotated.s $(BLOB)/blob.bin $(BLOB)/blob.elf $(BLOB)/blob.s
+	$(Q) rm -f $(BLOB)/callgraph.dot $(BLOB)/callgraph.svg
 
 save: $(COMMENTS)
 

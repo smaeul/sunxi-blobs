@@ -1,0 +1,46 @@
+#!/bin/bash -eu
+#
+# Copyright © 2017 Samuel Holland <samuel@sholland.org>
+# See LICENSE in the project directory for license terms.
+#
+# bash is only required for hexadecimal math.
+#
+
+# Adjust these as needed
+ARCH=${ARCH:-or1k}
+CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
+
+# Command-line parameters
+dir=$1
+
+# Internal variables
+assembly=${dir}/blob.s
+blob=${dir}/blob.elf
+comments=${dir}/comments
+
+# Ensure the disassembly and the comments file exist
+make "$assembly"
+make BLOB="$dir" save
+
+strings -d -t x "$blob" |
+while read -r addr msg; do
+  # Avoid false positives by assuming the data section starts after 0x10000.
+  if [[ "0x${addr}" -lt 0x10000 ]]; then
+    continue
+  fi
+  # 0x34 is the difference between the virtual address and the file offset due
+  # to the ELF header. This is not likely to change, but if it does, it can be
+  # calculated with readelf or similar.
+  comment=$(printf '; msg = 0x%08x "%s"\n' "$((0x${addr} - 0x34))" "$msg")
+  pattern=$(printf 'l.ori r4,r4,0x%x' "$((0x${addr} - 0x10034))")
+  printf 'Looking for l.ori r4,r4,0x%x ...' "$((0x${addr} - 0x10034))"
+  grep -Fn "$pattern" "$assembly" | cut -d: -f1 |
+  while read -r line; do
+    printf ' %d' "$line"
+    sed -i "${line}s@.*@${comment}@" "$comments"
+  done
+  printf '\n'
+done
+
+# Build everything with the new symbols
+make BLOB="$dir"

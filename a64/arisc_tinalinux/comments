@@ -2777,6 +2777,8 @@
 
 
 
+
+
 ; msg = 0x00010b7f "irq [%x] enable before ISR install"
 
 
@@ -2831,7 +2833,7 @@
 
 
 
-; int register_isr(u32 index, u32 isr, u32 arg2);
+; int register_isr(u32 index, u32 isr, u32 isr_arg);
 
 
 
@@ -2843,15 +2845,15 @@
 
 ; msg = 0x00010ba3 "install isr %x"
 
-; printf(1, msg, arg2)
+; printf(1, msg, isr_arg)
 
 ; offset = index << 3
 
 ; ret = 0
 ; base = 0x000123b0
-; ptr = offset + base
-; *ptr = isr
-; *(ptr + 4) = arg2
+; entry = offset + base
+; entry->isr = isr
+; entry->arg = isr_arg
 
 
 
@@ -2865,16 +2867,16 @@
 ; offset = index << 3
 ; base = 0x000123b0
 
-; ptr = offset + base
-; old = *ptr
+; entry = offset + base
+; old = entry->isr
 ; if (old == isr)
 
 
 
 ;     zero = 0
-;     new = 0x000068a8
-;     *(ptr + 4) = zero
-;     *ptr = new
+;     new = 0x000068a8 (isr_nop_warning)
+;     entry->arg = zero
+;     entry->isr = new
 ;     return 0
 
 
@@ -3148,15 +3150,15 @@
 
 
 
+; var5 = pmessage->paras[0] (ir_code)
 
+; var3 = pmessage->paras[1] (ir_addr)
+; var6 = 1
 
+; ir_addr = var3
 
-
-
-
-
-
-
+; ir_code = var5
+; ir_en = var6
 
 
 ; msg = 0x00010bd5 "ir key:%x, addr:%x"
@@ -3165,7 +3167,7 @@
 
 
 
-
+; return 0
 
 
 
@@ -4681,7 +4683,7 @@
 
 
 
-
+; register_isr(0, pmu_nmi_isr, 0)
 
 
 
@@ -7509,19 +7511,42 @@
 
 
 
+; entry = arg
+; ptr18 = 0x000124cc
 
+; ret = entry->index
 
+; ptr3 = *ptr18
+; ret = 1 << ret
+; var3 = *(ptr3 + 4)
 
 
+; ret &= var3
 
+; if (ret != 0) {
 
+;     fn = entry->callback
+;     if (fn == NULL) {
 
 
 
+;         printf(2, msg)
+;         msg = 0x000112d1 "timer irq handler not install"
+;         ret = 0
+;     } else {
+;         fn(entry->arg)
 
+;         index = *entry
+;         ptr3 = *ptr18
+;         var2 = 1 << index
+;         ret = 1
+;         *(ptr3 + 4) = var2
+;     }
+; }
 
 
 
+; return ret
 
 
 
@@ -7529,7 +7554,6 @@
 
 
 
-; msg = 0x000112d1 "timer irq handler not install"
 
 
 
@@ -7599,73 +7623,53 @@
 
 
 
+; int timer_register_callback(void (*fn)(uint32_t), uint32_t arg)
 
 
 
 
 
 
+; ptr2 = 0x00011d50
+; var16 = fn
+; ret = disable_interrupts()
+; var14 = arg
+; var5 = *(ptr2 + 4)            // *0x11d54
+; if (var5 != 0) {
 
+;     // array of two 28-byte structures
+;     var3 = *(&ptr2[1] + 4)    // *0x11d70
+;     var2 = 0
+;     if (var3 != 0)
+;         goto next
+;     var5 = 1  // DS
+; }
 
+; offset = var5 * 28
 
+; ptr3 = 0x00011d50
+; entry = ptr3 + offset
 
+; entry->callback = fn
+; entry->used = 1
+; entry->arg = arg
+; next: restore_interrupts(ret)
 
+; if (entry == NULL) { // goto next was taken
 
 
 
+;     printf(2, msg)
+;     msg = 0x000112f0 "no free timer now"
 
+; } else {
 
 
 
+;     register_isr(entry->isr_idx, timer_isr, entry)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-; msg = 0x000112f0 "no free timer now"
-
-
-
-
-
-
-
+; }
+; ret = entry
 
 
 
@@ -8917,20 +8921,20 @@
 
 
 
-; void dram_set_crc_params(u32 a, u32 b, u32 c);
+; void dram_set_crc_paras(u32 en, u32 srcaddr, u32 len);
 
 
 ; ptr = 0x000121cc
-; *ptr = a
+; *ptr = en
 
 ; ptr = 0x00011db0
-; *ptr = b
+; *ptr = srcaddr
 
 ; ptr = 0x00011db4
 ; return
-; DS *ptr = c
+; DS *ptr = len
 
-; u32 get_0x121cc(void);
+; u32 dram_get_crc_enabled(void);
 
 ; ptr = 0x000121cc
 ; return *ptr
@@ -8973,6 +8977,8 @@
 
 
 ; msg = 0x000114a8 "crc finish..."
+
+
 
 
 
@@ -9051,25 +9057,25 @@
 ; loop
 
 
+; void exception_handler(u32 number, u32 pc, u32 *regs);
 
 
 
 
+; if (number != 8) // external interrupt
+;     unknown_exception(number, pc, regs) // noreturn
 
 
 
 
+; return irq_handler()
+
+
+; void unknown_exception(u32 number, u32 pc, u32 *regs);
 
 
 
-
-
-
-
-
-
-
-; ptr = 0x00011dd4 <array of char* exc types>
+; ptr = 0x00011dd4 <array of char* exception types>
 
 
 
@@ -9144,6 +9150,8 @@
 
 
 
+
+
 ; u32 get_0x121e4(void);
 
 ; ptr3 = 0x000121e4
@@ -9172,7 +9180,7 @@
 
 
 
-
+; timer_register_callback(timer_isr_callback, 0)
 
 
 
@@ -10002,7 +10010,7 @@
 
 
 
-
+; msgptr = addr
 
 
 
@@ -10030,56 +10038,56 @@
 
 
 
+; ARISC_SET_DEBUG_LEVEL (96)
 
 
+; binary search with delay slot below
 
 
+; ARISC_AXP_DISABLE_IRQ (81)
+
+; binary search with delay slot below
 
 
+; ARISC_STANDBY_INFO_REQ (32)
+
+; ARISC_CPUX_DVFS_REQ (48)
+
+; invalid
+
+; ARISC_ESSTANDBY_ENTER_REQ (22)
+; --------------------------------------------
+; ARISC_AXP_GET_CHIP_ID (83 from delay slot)
+
+; ARISC_AXP_ENABLE_IRQ (82 (<83 but >81))
 
 
+; invalid
+
+; ARISC_AXP_SET_PARAS (84)
+; --------------------------------------------
+; ARISC_SET_IR_PARAS (101)
+
+; binary search with delay slot below
 
 
+; ARISC_SET_UART_BAUDRATE (98)
+
+; ARISC_MESSAGE_LOOPBACK (97 (<98 but >96))
 
 
+; invalid
 
+; ARISC_SET_DEBUG_DRAM_CRC_PARAS (100)
+; --------------------------------------------
+; ARISC_RSB_WRITE_BLOCK_DATA (129)
 
+; ARISC_RSB_BITS_OPS_SYNC (130)
 
+; invalid
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; ARISC_RSB_READ_BLOCK_DATA (128)
+; --------------------------------------------
 
 
 
@@ -10087,7 +10095,7 @@
 
 
 
-
+; --------------------------------------------
 
 ; msg = 0x000118f5 "esstandby enter request"
 
@@ -10122,7 +10130,7 @@
 
 
 
-
+; --------------------------------------------
 
 
 
@@ -10130,7 +10138,7 @@
 
 
 
-
+; --------------------------------------------
 
 
 
@@ -10138,7 +10146,7 @@
 
 
 
-
+; --------------------------------------------
 
 
 
@@ -10146,7 +10154,7 @@
 
 
 
-
+; --------------------------------------------
 
 
 ; msg = 0x00011968 "enable axp irq request"
@@ -10155,35 +10163,35 @@
 
 
 
-
+; --------------------------------------------
 
 
 
 ; msg = 0x00011980 "axp get chip id request"
+; axp_get_chip_id(msgptr)
 
 
-
-
+; --------------------------------------------
 
 ; msg = 0x00011999 "pmu set paras request"
+; pmu_set_params(msgptr)
 
 
-
-
+; --------------------------------------------
 
 ; msg = 0x000119b0 "read pmu register request"
+; rsb_read_pmu_reg(msgptr)
 
 
-
-
+; --------------------------------------------
 
 
 
 ; msg = 0x000119cb "write pmu register request"
+; rsb_write_pmu_reg(msgptr)
 
 
-
-
+; --------------------------------------------
 
 
 
@@ -10191,7 +10199,7 @@
 
 
 
-
+; --------------------------------------------
 
 
 
@@ -10199,7 +10207,7 @@
 
 
 
-
+; --------------------------------------------
 
 
 
@@ -10207,15 +10215,15 @@
 
 
 
-
+; --------------------------------------------
 
 ; msg = 0x00011a31 "set dram crc paras request"
 
 
+; dram_set_crc_paras(pmessage->paras[0],
+;     pmessage->paras[1], pmessage->paras[2])
 
-
-
-
+; --------------------------------------------
 
 ; msg = 0x00011a4d "loopback message request"
 
@@ -10467,6 +10475,26 @@
 
 
 
+; reg = 1
+; reg |= 80
+; spr[0, 0x11] = reg  // SPR[SR] = 0x00000081
+; spr[10, 0x0] = 0x00000000 // SPR[TTMR] = 0
+
+; reg = 0x12b00
+; mask = 0xfffffffd
+; reg &= mask   // nop
+; reg6 = spr[0, 0x11]  // SPR[SR]
+; mask = 0xffffffff
+; mask ^= 0x10   // = 0xffffffef
+; reg5 = reg6 & mask
+; spr[0, 0x11] = reg5  // SPR[SR] &= ~0x10
+; var14 = 0x10
+; reg6 = 0
+; reg5 = 0x1000
+; do { spr[4, 0x02] = reg6 // SPR[ICBIR] = 0
+
+;     reg6 += 0x10
+; } while (reg6 != reg5)
 
 
 
@@ -10479,29 +10507,9 @@
 
 
 
+; ptr5 = 0x11e20
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; ptr6 = 0x12700
 
 
 

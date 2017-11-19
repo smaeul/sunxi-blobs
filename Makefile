@@ -44,7 +44,7 @@ save: $(COMMENTS)
 	$(Q) test -z "$$(uniq -df1 $*/sections)" || \
 		(echo "error: Consecutive sections of the same type!"; false)
 	$(Q) sort -cu $*/symbols
-	$(Q) test -z "$$(sort -k2 $*/symbols | uniq -df1)" || \
+	$(Q) test -z "$$(sort -k2 $*/symbols | grep -Fv '$$' | uniq -df1)" || \
 		(echo "error: Duplicate symbol name!"; false)
 
 %/annotated.s: %/blob.s %/comments

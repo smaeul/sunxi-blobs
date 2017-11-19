@@ -1,0 +1,30 @@
+#!/bin/sh -eu
+#
+# Copyright © 2017 Samuel Holland <samuel@sholland.org>
+# See LICENSE in the project directory for license terms.
+#
+
+# Temporary files, deleted when the script exits
+a=$(mktemp)
+b=$(mktemp)
+trap 'rm -f "$a" "$b"' EXIT
+
+cp "$1" "$a"
+cp "$2" "$b"
+
+# Remove numeric branch destinations
+sed -i 's/l\.b\([[:graph:]]*\) .* </l.b\1 </' "$a" "$b"
+sed -i 's/l\.j\([[:graph:]]*\) .* </l.j\1 </' "$a" "$b"
+
+# Remove numeric symbol addresses
+sed -i 's/^[[:xdigit:]]\+ </</' "$a" "$b"
+
+# Remove raw instruction and instruction addresses
+sed -i 's/^.*l\./l./g' "$a" "$b"
+
+git diff \
+  --diff-algorithm=patience \
+  --inter-hunk-context=1000 \
+  --no-index \
+  --patch-with-stat \
+  "$a" "$b"

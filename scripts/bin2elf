@@ -44,8 +44,14 @@ trap 'rm -fr "$ldscript" "$tmpdir" "$tmpfile"' EXIT
 elfify() {
   # Convert raw binary into an ELF section of the appropriate type
   case "$4" in
-    data) flags=alloc,contents,data,load,readonly ;;
-    text) flags=alloc,code,contents,load,readonly ;;
+    data)
+      flags=alloc,contents,data,load,readonly
+      stype=object
+      ;;
+    text)
+      flags=alloc,code,contents,load,readonly
+      stype=function
+      ;;
   esac
   case "$ENDIANNESS" in
     big)    reverse="--reverse-bytes $((WORDSIZE / 8))" ;;
@@ -60,8 +66,9 @@ elfify() {
 
   # Import symbols for this section. File format: "<address> <name>" lines
   while read -r address name; do
-    if [[ "$address" -ge "$start" && "$address" -lt "$3" ]]; then
-      printf '    %s = %s;\n' "$name" "$((address - start))" >> "$ldscript"
+    if [[ "$address" -ge "$2" && "$address" -lt "$3" ]]; then
+      ${CROSS_COMPILE}objcopy \
+        --add-symbol "${name}=.${4}:$((address - $2)),${stype}" "$1"
     fi
   done < "$symbol_file"
 
@@ -147,4 +154,4 @@ elfify "$of" "$(hex "$start")" "$((2 ** WORDSIZE))" "$type"
 printf '}\n' >> "$ldscript"
 
 # Merge all section files in the correct order
-${CROSS_COMPILE}ld -o "$output_file" -r -T "$ldscript"
+${CROSS_COMPILE}ld -e 0 -o "$output_file" -r -T "$ldscript"

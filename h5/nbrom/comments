@@ -2838,8 +2838,43 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ; _start: goto start2
 ; _start_alt: goto start2_alt
+
+
+
+
+
 
 
 
@@ -2991,6 +3026,40 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ; void debug_checkpoint_address(u32 param0)
 
 
@@ -3131,6 +3200,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ; void write_efuse(u32 index, u32 data)
 
 
@@ -3223,6 +3307,55 @@
 
 
 ; u32 lcjs_get_ce_clksrc(void)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -7403,7 +7536,53 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ; // = 0x1c68000, SPI0_BASE_REG
+
+
+
+
 
 
 
@@ -7815,6 +7994,7 @@
 
 
 
+
 ; u32 udelay(s32 cycles)
 ;   // nop
 ;   // nop
@@ -7845,7 +8025,6 @@
 ;   out: return retval
 ;   success: retval = 0
 ;   goto out
-
 
 
 

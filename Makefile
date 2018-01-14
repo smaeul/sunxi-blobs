@@ -62,7 +62,8 @@ save: $(COMMENTS)
 
 %/blob.s: %/blob.elf
 	$(M) OBJDUMP $@
-	$(Q) $(call cross_compile,$*)objdump -d $^ > $@.tmp && expand -t11,12 $@.tmp > $@
+	$(Q) $(call cross_compile,$*)objdump -d $^ | expand -t11,12 > $@.tmp \
+		&& cut -c-86 $@.tmp > $@
 	$(Q) rm -f $@.tmp
 
 %/callgraph.dot: %/blob.s

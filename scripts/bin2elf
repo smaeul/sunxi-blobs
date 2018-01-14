@@ -128,7 +128,7 @@ while read -r newstart newtype; do
   of=$tmpdir/$(hex "$start").$type
   dd bs="$newstart" count=1 if="$input_file" of="$tmpfile" 2> /dev/null
   dd bs="$bs" if="$tmpfile" of="$of" skip="$skip" 2> /dev/null
-  elfify "$of" "$(hex "$start")" "$newstart" "$type"
+  elfify "$of" "$(hex "$((base + start))")" "$((base + newstart))" "$type"
 
   start=$newstart
   type=$newtype
@@ -149,7 +149,7 @@ fi
 of=$tmpdir/$(hex "$start").$type
 dd bs="$bs" if="$input_file" of="$of" skip="$skip" 2> /dev/null
 # The end address doesn't matter as long as it's past the end of the file
-elfify "$of" "$(hex "$start")" "$((2 ** WORDSIZE))" "$type"
+elfify "$of" "$(hex "$((base + start))")" "$((2 ** WORDSIZE))" "$type"
 
 printf '}\n' >> "$ldscript"
 

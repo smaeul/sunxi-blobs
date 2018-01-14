@@ -13,8 +13,8 @@ CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
 # Generated, but might need adjustment
 case "$ARCH" in
   arm)
-    CALL_INSN=bl
-    TAIL_INSN=b
+    CALL_INSN='\(bl\|blx\)'
+    TAIL_INSN=
     ;;
   or1k)
     CALL_INSN=l.jal
@@ -49,7 +49,9 @@ if test "$ARCH" = "arm"; then
 fi
 
 # Add all normally-called functions
-grep "${CALL_INSN}\s" "$assembly" | sed "s/^.*${CALL_INSN}\s//" | sort -gu |
+grep "${CALL_INSN}\s[[:xdigit:]]" "$assembly" |
+sed "s/^.*${CALL_INSN}\s//" |
+sort -gu |
 while read -r addr; do
   printf '0x%08x func_%08x\n' "$addr" "$addr"
 done >> "$symbols"
@@ -58,12 +60,15 @@ done >> "$symbols"
 make "$assembly"
 
 # Add all tail-called functions (from the last instruction of another function)
-grep -B3 '^[[:xdigit:]]\{8\} <[[:alnum:]_]\+>:$' "$assembly" |
-grep "${TAIL_INSN}\s" | sed "s/^.*${TAIL_INSN}\s\([[:xdigit:]]\+\)\s.*$/0x\1/" |
-sort -gu |
-while read -r addr; do
-  printf '0x%08x func_%08x\n' "$addr" "$addr"
-done >> "$symbols"
+if test -n "$TAIL_INSN"; then
+  grep -B2 '^[[:xdigit:]]\{8\} <[[:alnum:]_]\+>:$' "$assembly" |
+  grep "${TAIL_INSN}\s[[:xdigit:]]" |
+  sed "s/^.*${TAIL_INSN}\s\([[:xdigit:]]\+\)\s.*$/0x\1/" |
+  sort -gu |
+  while read -r addr; do
+    printf '0x%08x func_%08x\n' "$addr" "$addr"
+  done >> "$symbols"
+fi
 
 # Merge the symbols
 sort -go "$symbols" -u "$symbols"

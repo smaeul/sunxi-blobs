@@ -27,6 +27,7 @@ dir=$1
 
 # Internal variables
 assembly=${dir}/blob.s
+sections=${dir}/sections
 symbols=${dir}/symbols
 
 # Usage: warn <message>
@@ -42,11 +43,16 @@ fi
 # Ensure the disassembled file exists
 make "$assembly"
 
+# Add ARM interleaved instruction/immediate data marker
+if test "$ARCH" = "arm"; then
+  grep -m1 'text$' "$sections" | sed 's/text/$a/' > "$symbols"
+fi
+
 # Add all normally-called functions
 grep "${CALL_INSN}\s" "$assembly" | sed "s/^.*${CALL_INSN}\s//" | sort -gu |
 while read -r addr; do
   printf '0x%08x func_%08x\n' "$addr" "$addr"
-done > "$symbols"
+done >> "$symbols"
 
 # Update the disassembly
 make "$assembly"

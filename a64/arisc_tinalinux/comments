@@ -2250,14 +2250,14 @@
 
 
 
+; if (var5 == 0) {
 
 
 
+;     register_isr(17, hwmsgbox_isr, 0)
 
-
-
-
-
+;     enable_axp_nmi_irq(17)
+; }
 
 
 
@@ -2690,19 +2690,19 @@
 
 
 
+; ptr3 = 0x01f00c00     // R_INTC_BASE
+; ptr4 = 0x000123a4     // isr_list-0xc
 
+; var2 = 0
+; *ptr4 = ptr3
+; *(ptr3 + 64) = var2   // INTC_EN_REG0 = 0
+; mask = 0xffffffff
+; *(ptr3 + 80) = var2   // INTC_MASK_REG0 = 0
 
+; *(ptr3 + 16) = mask   // INTC_IRQ_PEND_REG0 = 0xffffffff
 
-
-
-
-
-
-
-
-
-
-
+; ret = var2            // ret = 0
+; return ret
 
 
 
@@ -2765,27 +2765,29 @@
 
 
 
+; u32 r_intc_current_irq(void)
+
+; ptr3 = 0x000123a4     // r_intc_base
+; ptr3 = *ptr3          // R_INTC_BASE
+; ret = *ptr3           // readl(R_INTC_BASE + 0)
+; return ret >> 2
 
 
 
 
-
-
-
-
-
-
-
+; ret = r_intc_current_irq()
 
 
 
 ; msg = 0x00010b7f "irq [%x] enable before ISR install"
+; printf(4, msg, ret)
 
 
 
+; return 1
 
 
-
+; void isr_list_init(void)
 
 
 
@@ -2895,16 +2897,16 @@
 
 
 
+; offset = ret << 3 // ret * sizeof(isr_list[0])
+; base = 0x000123b0
+; entry = offset + base
+; fn = entry->isr
+; fn(entry->arg)
 
 
+; ret = 0
 
-
-
-
-
-
-
-
+; return ret
 
 
 
@@ -7553,40 +7555,42 @@
 
 
 
+; base = 0x1f00800
+; ptr = 0x124cc
+
+; *ptr = base
 
 
+; clock_func_00009590(28, 1)
 
 
+; clock_func_00009ef4(28, 1)
 
 
+; base = *ptr
+; ptr4 = 0x011d68
+; var3 = 0
 
+; var3 += 1
+; var7 = 0
+; var3 <<= 5 (var3 = 0x20)
+; mask8 = 0xfffffff3
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; ptr3 = base + var3
+; *ptr4 = ptr3
+; *ptr3 = 0
+; var7 = *ptr3
+; var7 &= mask8 (&= 0xfffffff3)
+; mask8 = 0xffffff8f
+; *ptr3 = var7
+; var7 = *ptr3
+; var7 |= BIT(2)
+; *ptr3 = var7
+; var7 = *ptr3
+; var7 &= mask8 (&= 0xffffff8f)
+; *ptr3 = var7
+; var7 = *ptr3
+; *ptr3 = var7
 
 
 
@@ -9715,7 +9719,7 @@
 
 ; puts(0x0001266c)
 
-; write_sr(var22)
+; restore_interrupts(var22)
 
 ; ptr3 = 0x0001266c
 
@@ -10341,6 +10345,8 @@
 
 
 
+
+
 ; msg = 0x00011a82 "allocate notifier failed"
 
 
@@ -10482,11 +10488,11 @@
 
 ; reg = 0x12b00
 ; mask = 0xfffffffd
-; reg &= mask   // nop
+; reg &= mask   // Set stack pointer
 ; reg6 = spr[0, 0x11]  // SPR[SR]
 ; mask = 0xffffffff
 ; mask ^= 0x10   // = 0xffffffef
-; reg5 = reg6 & mask
+; reg5 = reg6 & mask // Disable icache
 ; spr[0, 0x11] = reg5  // SPR[SR] &= ~0x10
 ; var14 = 0x10
 ; reg6 = 0
@@ -10494,7 +10500,7 @@
 ; do { spr[4, 0x02] = reg6 // SPR[ICBIR] = 0
 
 ;     reg6 += 0x10
-; } while (reg6 != reg5)
+; } while (reg6 != reg5) // Clear icache
 
 
 
@@ -10506,7 +10512,7 @@
 
 
 
-
+; // Clear .bss
 ; ptr5 = 0x11e20
 
 ; ptr6 = 0x12700

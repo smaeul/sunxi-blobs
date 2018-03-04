@@ -23,6 +23,11 @@ sections=${dir}/sections
 make "$assembly"
 make BLOB="$dir" save
 
+# Ensure the comments file has enough lines
+if ! grep -q . "$comments"; then
+  sed 's/.*//' "$assembly" > "$comments"
+fi
+
 # Create temporary files for extracting parts of the blob
 tmpfile=$(mktemp)
 tmpimed=$(mktemp)

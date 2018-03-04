@@ -6140,7 +6140,7 @@
 
 
 
-
+; msg = 0x00010f72 "invaid module clock id (%d) when set source"
 
 
 
@@ -9745,7 +9745,7 @@
 
 ; new_mask = mask
 ; old_mask = *debug_mask_ptr
-; msg = 0x000117c3 ["debug_mask from %d to %d"]
+; msg = 0x000117c3 "debug_mask from %d to %d"
 
 
 ; printf(8, msg, old_mask, new_mask)

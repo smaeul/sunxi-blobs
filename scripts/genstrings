@@ -46,9 +46,9 @@ for i in ${!addrs[@]}; do
 
   ${CROSS_COMPILE}strings -d -t x "$tmpfile" |
   while read -r addr msg; do
-    addr=$(((base + 0x${addr}) & 0xffff))
+    addr=$((base + 0x${addr}))
     comment=$(printf '; msg = 0x%08x "%s"\n' "$addr" "$msg")
-    pattern=$(printf 'l.ori r4,r4,0x%x' "$addr")
+    pattern=$(printf 'l.ori r4,r4,0x%x' "$((addr & 0xffff))")
     printf '  Looking for l.ori r4,r4,0x%x ...' "$addr"
     grep -Fn "$pattern" "$assembly" | cut -d: -f1 |
     while read -r line; do

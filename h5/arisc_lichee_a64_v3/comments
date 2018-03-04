@@ -2624,7 +2624,7 @@
 
 
 
-; msg = 0x00003010 ""
+; msg = 0x00013010 ""
 
 
 
@@ -4119,7 +4119,7 @@
 
 
 
-; msg = 0x00002bd4 "ERR:inv msg[%x] rec"
+; msg = 0x00012bd4 "ERR:inv msg[%x] rec"
 
 
 
@@ -4163,7 +4163,7 @@
 
 
 
-; msg = 0x00002bd4 "ERR:inv msg[%x] rec"
+; msg = 0x00012bd4 "ERR:inv msg[%x] rec"
 
 
 
@@ -4327,7 +4327,7 @@
 
 
 
-; msg = 0x00002be9 "ERR:hsyn msg err"
+; msg = 0x00012be9 "ERR:hsyn msg err"
 
 
 
@@ -4485,7 +4485,7 @@
 
 
 
-; msg = 0x00002bfb "ERR:inv msg rec"
+; msg = 0x00012bfb "ERR:inv msg rec"
 
 
 
@@ -4591,7 +4591,7 @@
 
 
 
-; msg = 0x00002c0c "ERR:ts%d to"
+; msg = 0x00012c0c "ERR:ts%d to"
 
 
 
@@ -4758,7 +4758,7 @@
 
 
 
-; msg = 0x00002c19 "ERR:irq [%x] enable before ISR install"
+; msg = 0x00012c19 "ERR:irq [%x] enable before ISR install"
 
 
 
@@ -4857,7 +4857,7 @@
 
 
 
-; msg = 0x00002c41 "ERR:ISR not installed!"
+; msg = 0x00012c41 "ERR:ISR not installed!"
 
 
 
@@ -4966,7 +4966,7 @@
 
 
 
-; msg = 0x00002c59 "ERR:ir data full"
+; msg = 0x00012c59 "ERR:ir data full"
 
 
 
@@ -5381,7 +5381,7 @@
 
 
 
-; msg = 0x00002c6b "ERR:inv ir rx irq det, st:0x%x"
+; msg = 0x00012c6b "ERR:inv ir rx irq det, st:0x%x"
 
 
 
@@ -5623,7 +5623,7 @@
 
 
 
-; msg = 0x00002c8b "pmu is exist"
+; msg = 0x00012c8b "pmu is exist"
 
 
 
@@ -5693,7 +5693,7 @@
 
 
 
-; msg = 0x00002c99 "pmu is not exist"
+; msg = 0x00012c99 "pmu is not exist"
 
 
 
@@ -6506,7 +6506,7 @@
 
 
 
-; msg = 0x00002cab "reset1 system"
+; msg = 0x00012cab "reset1 system"
 
 
 
@@ -6693,7 +6693,7 @@
 
 
 
-; msg = 0x00002cba "poweroff"
+; msg = 0x00012cba "poweroff"
 
 
 
@@ -6742,7 +6742,7 @@
 
 
 
-; msg = 0x00002cc4 "shutdown"
+; msg = 0x00012cc4 "shutdown"
 
 
 
@@ -6819,7 +6819,7 @@
 
 
 
-; msg = 0x00002cce "cpu0 enter wfi now, wait [%d] ms"
+; msg = 0x00012cce "cpu0 enter wfi now, wait [%d] ms"
 
 
 
@@ -7116,7 +7116,7 @@
 
 
 
-; msg = 0x00002cf0 "ERR:icd %x"
+; msg = 0x00012cf0 "ERR:icd %x"
 
 
 
@@ -9058,7 +9058,7 @@
 
 
 
-; msg = 0x00002cfc "ERR:e1:%x"
+; msg = 0x00012cfc "ERR:e1:%x"
 
 
 
@@ -9077,7 +9077,7 @@
 
 
 
-; msg = 0x00002d07 "ERR:to0"
+; msg = 0x00012d07 "ERR:to0"
 
 
 
@@ -9094,7 +9094,7 @@
 
 
 
-; msg = 0x00002d10 "ERR:e3:%x"
+; msg = 0x00012d10 "ERR:e3:%x"
 
 
 
@@ -9118,7 +9118,7 @@
 
 
 
-; msg = 0x00002d1b "ERR:to1"
+; msg = 0x00012d1b "ERR:to1"
 
 
 
@@ -9131,7 +9131,7 @@
 
 
 
-; msg = 0x00002d24 "ERR:e5:%x"
+; msg = 0x00012d24 "ERR:e5:%x"
 
 
 
@@ -9153,7 +9153,7 @@
 
 
 
-; msg = 0x00002d2f "ERR:to2"
+; msg = 0x00012d2f "ERR:to2"
 
 
 
@@ -9166,7 +9166,7 @@
 
 
 
-; msg = 0x00002d38 "ERR:e7:%x"
+; msg = 0x00012d38 "ERR:e7:%x"
 
 
 
@@ -9191,7 +9191,7 @@
 
 
 
-; msg = 0x00002d43 "ERR:to3"
+; msg = 0x00012d43 "ERR:to3"
 
 
 
@@ -9206,7 +9206,7 @@
 
 
 
-; msg = 0x00002d4c "ERR:e9:%x"
+; msg = 0x00012d4c "ERR:e9:%x"
 
 
 
@@ -9234,7 +9234,7 @@
 
 
 
-; msg = 0x00002d57 "ERR:to4"
+; msg = 0x00012d57 "ERR:to4"
 
 
 
@@ -9247,7 +9247,7 @@
 
 
 
-; msg = 0x00002d60 "ERR:e11:%x"
+; msg = 0x00012d60 "ERR:e11:%x"
 
 
 
@@ -9270,7 +9270,7 @@
 
 
 
-; msg = 0x00002d6c "ERR:to5"
+; msg = 0x00012d6c "ERR:to5"
 
 
 
@@ -9283,7 +9283,7 @@
 
 
 
-; msg = 0x00002d75 "ERR:e13:%x"
+; msg = 0x00012d75 "ERR:e13:%x"
 
 
 
@@ -9308,7 +9308,7 @@
 
 
 
-; msg = 0x00002d81 "ERR:to6"
+; msg = 0x00012d81 "ERR:to6"
 
 
 
@@ -9324,7 +9324,7 @@
 
 
 
-; msg = 0x00002d8a "ERR:e14:%x"
+; msg = 0x00012d8a "ERR:e14:%x"
 
 
 
@@ -9338,7 +9338,7 @@
 
 
 
-; msg = 0x00002d96 "ERR:e15:%x"
+; msg = 0x00012d96 "ERR:e15:%x"
 
 
 
@@ -9400,7 +9400,7 @@
 
 
 
-; msg = 0x00002da2 "ERR:state err:%x"
+; msg = 0x00012da2 "ERR:state err:%x"
 
 
 
@@ -9418,14 +9418,14 @@
 
 
 
-; msg = 0x00002420 "ERR:extended_standby > standby_size/2"
+; msg = 0x00012420 "ERR:extended_standby > standby_size/2"
 
 
-; msg = 0x00002420 "ERR:extended_standby > standby_size/2"
+; msg = 0x00012420 "ERR:extended_standby > standby_size/2"
 
 
 
-; msg = 0x00002db4 "ERR:lcr err:%x"
+; msg = 0x00012db4 "ERR:lcr err:%x"
 
 
 
@@ -10204,7 +10204,7 @@
 
 
 
-; msg = 0x00002dc4 "%s :"
+; msg = 0x00012dc4 "%s :"
 
 
 
@@ -10221,7 +10221,7 @@
 
 
 
-; msg = 0x00002dd4 "%8x"
+; msg = 0x00012dd4 "%8x"
 
 
 
@@ -10522,7 +10522,7 @@
 
 
 
-; msg = 0x00002dd9 "ERR:InVoltFail"
+; msg = 0x00012dd9 "ERR:InVoltFail"
 
 
 
@@ -10542,7 +10542,7 @@
 
 
 
-; msg = 0x00002de9 "ERR:current voltage != target voltage"
+; msg = 0x00012de9 "ERR:current voltage != target voltage"
 
 
 
@@ -10596,7 +10596,7 @@
 
 
 
-; msg = 0x00002e10 "ERR:dvfs try to decrease voltage failed"
+; msg = 0x00012e10 "ERR:dvfs try to decrease voltage failed"
 
 
 
@@ -10607,7 +10607,7 @@
 
 
 
-; msg = 0x00002e39 "ERR:cv %u != tv %u"
+; msg = 0x00012e39 "ERR:cv %u != tv %u"
 
 
 
@@ -10788,7 +10788,7 @@
 
 
 
-; msg = 0x00002e4d "crc begin..."
+; msg = 0x00012e4d "crc begin..."
 
 
 
@@ -10797,7 +10797,7 @@
 
 
 
-; msg = 0x00002e5b "src:%x len:%x"
+; msg = 0x00012e5b "src:%x len:%x"
 
 
 
@@ -10814,7 +10814,7 @@
 
 
 
-; msg = 0x00002e6a "crc finish..."
+; msg = 0x00012e6a "crc finish..."
 
 
 
@@ -10843,7 +10843,7 @@
 
 
 
-; msg = 0x00002e79 "stack free:%dbyte"
+; msg = 0x00012e79 "stack free:%dbyte"
 
 
 
@@ -10909,18 +10909,18 @@
 
 
 
-; msg = 0x00002e8c "exception [%x, %s] coming, [epc = %x]"
+; msg = 0x00012e8c "exception [%x, %s] coming, [epc = %x]"
 
 
 
 
-; msg = 0x00002eb3 "register list:"
+; msg = 0x00012eb3 "register list:"
 
 
 
 
 
-; msg = 0x00002ec3 "register%x: %x"
+; msg = 0x00012ec3 "register%x: %x"
 
 
 
@@ -10931,7 +10931,7 @@
 
 
 
-; msg = 0x00002ed3 "cpu abort enter..."
+; msg = 0x00012ed3 "cpu abort enter..."
 
 
 
@@ -11111,7 +11111,7 @@
 
 
 
-; msg = 0x00002fcd "sun8iw5_v0.03.00-244-gb750b8e"
+; msg = 0x00012fcd "sun8iw5_v0.03.00-244-gb750b8e"
 
 
 
@@ -11138,7 +11138,7 @@
 
 
 
-; msg = 0x00002feb "------------------------------"
+; msg = 0x00012feb "------------------------------"
 
 
 
@@ -11251,7 +11251,7 @@
 
 
 
-; msg = 0x00003010 ""
+; msg = 0x00013010 ""
 
 
 
@@ -11658,7 +11658,7 @@
 
 
 
-; msg = 0x00003021 "ERR:ami,add:%p"
+; msg = 0x00013021 "ERR:ami,add:%p"
 
 
 
@@ -11967,7 +11967,7 @@
 
 
 
-; msg = 0x00003031 "ERR:imt [%x]"
+; msg = 0x00013031 "ERR:imt [%x]"
 
 
 
@@ -12919,7 +12919,7 @@
 
 
 
-; msg = 0x00002420 "ERR:extended_standby > standby_size/2"
+; msg = 0x00012420 "ERR:extended_standby > standby_size/2"
 
 
 
@@ -12930,7 +12930,7 @@
 
 
 
-; msg = 0x00002447 "%x enter"
+; msg = 0x00012447 "%x enter"
 
 
 
@@ -13863,7 +13863,7 @@
 
 
 
-; msg = 0x00002451 "wait"
+; msg = 0x00012451 "wait"
 
 
 
@@ -14591,7 +14591,7 @@
 
 
 
-; msg = 0x00002457 "dram crc error..."
+; msg = 0x00012457 "dram crc error..."
 
 
 
@@ -14636,7 +14636,7 @@
 
 
 
-; msg = 0x0000246a "wait ac327 resume..."
+; msg = 0x0001246a "wait ac327 resume..."
 
 
 
@@ -14659,7 +14659,7 @@
 
 
 
-; msg = 0x00002480 "ERR:esstandby ignore message [%x, %x]"
+; msg = 0x00012480 "ERR:esstandby ignore message [%x, %x]"
 
 
 
@@ -14698,7 +14698,7 @@
 
 
 
-; msg = 0x000024a7 "%x return"
+; msg = 0x000124a7 "%x return"
 
 
 
@@ -14834,7 +14834,7 @@
 
 
 
-; msg = 0x000024b2 "reset system now"
+; msg = 0x000124b2 "reset system now"
 
 
 

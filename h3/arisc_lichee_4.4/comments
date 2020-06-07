@@ -2233,31 +2233,33 @@
 
 
 
+; default: return -1
+
+; case 1: (r11 == 0)
+
+; case 2: (r11 == 3)
+
+; case 3: (r11 == 1)
+; load APB0_CFG_REG
+
+; r11 <<= 16 (bit offset of CPUS_CLK_SRC_SEL)
+; clear APB0_CLK_RATIO
+
+; store APB0_CFG_REG
+
+; load CPUS_CLK_REG
+; clear CPUS_CLK_SRC_SEL
+; set new CPUS_CLK_SRC_SEL
+
+; store CPUS_CLK_REG
+; delay 16 units
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; loglevel = 1
 
 ; msg = 0x0000888b "broadcast apb clock change done"
+; return 0
+
 
 
 
@@ -2325,6 +2327,8 @@
 
 
 
+
+
 ; msg = 0x000088cc "invaid module clock id (%d) when set reset"
 
 
@@ -2352,27 +2356,27 @@
 ; msg = 0x000088f8 "broadcast 24mhosc will power-off"
 
 
+; load
+
+; setbits 0xa7000000
+; store
+; load
+; setbits 0xa7000000
+
+; clrbits 0x00000003
+; store
 
 
+; load
 
 
+; setbits 0xa7000000
+; store
+; load
+; setbits 0xa7000000
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; clrbits 0x00000004
+; store
 
 
 
@@ -3720,7 +3724,9 @@
 
 
 
+; turn off DMA?
 
+; record DRAM CRC
 
 
 
@@ -3731,20 +3737,20 @@
 
 
 ; msg = 0x00008bd8 "power-down dram"
+; turn off DRAM?
+
+
+
+
+
+; turn off AXI/AHB/APB bus clocks
 
 
 
 
 
 
-
-
-
-
-
-
-
-
+; turn off PLLs
 
 
 

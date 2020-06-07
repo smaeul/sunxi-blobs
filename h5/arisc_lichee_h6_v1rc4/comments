@@ -368,231 +368,231 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; void css_set_cluster_reset(uint32_t release) {
+; if (release != 0) {
+;
+;
+;     if (release != 1)
+;         goto err;
+;
+;
+; } else /* (release == 0) */ {
+;     ptr = DEV_CPUCFG + CPUCFG_RESET_CTRL_REG(0);
+;     *ptr = 0;
+;     return;
+; }
+; ptr1 = DEV_CPUCFG + CPUCFG_RESET_CTRL_REG(0);
+; reg1 = 0x11101100;
+; ptr2 = DEV_CPUCFG + CPUCFG_DEBUG_REG;
+; *ptr1 = reg1;
+; reg2 = 0x0000000f;
+; *ptr2 = reg2;
+; err:
+; }
+
+; int css_disable_cluster(void) {
+;
+;
+;
+;
+; css_set_acinactm(1); // disable snooping
+; mask = ~BIT(0);
+; rtc_set_pwrstate(0x0000b000);
+;
+; css_wait_cluster_idle();
+;
+; rtc_set_pwrstate(0x0000b001);
+;
+;
+; ptr = DEV_CPUCFG + CPUCFG_DEBUG_REG;
+; reg = *ptr;
+;
+;
+; reg &= mask;
+;
+;
+; *ptr = reg; // deassert cpu0 DBGPWRDUP
+;
+; css_set_core_reset(0, 0); // assert cpu0 reset
+;
+;
+; ptr = DEV_R_CPUCFG + R_CPUCFG_PWRON_RESET_REG(0);
+; reg = *ptr;
+;
+;
+; reg &= mask;
+;
+;
+; *ptr = reg; // assert cluster pwron reset
+;
+; css_set_core_reset(0, 0); // assert cpu0 reset
+;
+;
+; css_set_core_reset(1, 0); // assert cpu1 reset
+;
+;
+; css_set_core_reset(2, 0); // assert cpu2 reset
+;
+;
+; css_set_core_reset(3, 0); // assert cpu3 reset
+;
+;
+;
+;
+; return rtc_set_pwrstate(0x0000b002);
+; }
+
+; int css_power_off_cluster(void) {
+;
+;
+;
+;
+; css_set_cluster_reset(0); // assert cluster resets
+; reg = 0;
+; rtc_set_pwrstate(0x0000b003);
+;
+;
+; ptr = 0x01f01d40 [R_CPUCFG_SYS_RESET_REG];
+; *ptr = reg;
+; timer_udelay(1);
+;
+;
+; prcm_set_gating(1, 1);
+;
+; rtc_set_pwrstate(0x0000b004);
+;
+;
+;
+; css_set_power_switch(0, 0, 0);
+;
+;
+;
+;
+; return rtc_set_pwrstate(0x0000b005);
+; }
+
+; int css_enable_cluster(void) {
+;
+;
+; rtc_set_pwrstate(0x0000b00c);
+;
+;
+; ptr = DEV_R_CPUCFG + R_CPUCFG_PWRON_RESET_REG(0);
+; reg = *ptr;
+; reg |= BIT(0);
+; *ptr = reg;
+;
+; css_set_core_reset(0, 3); // release cpu0 reset
+;
+; rtc_set_pwrstate(0x0000b00d);
+;
+;
+;
+; return 0;
+; }
+
+; void css_set_rvbar(uint32_t entry, unsigned core) {
+;
+;
+;
+; lobase = 0x002e0014; // (DEV_CPUCFG + CPUCFG_RVBAR_LO_REG(0, 0)) >> 3
+; loptr = savebase + core;
+;
+; offset = core << 3;
+; hibase = DEV_CPUCFG + CPUCFG_RVBAR_HI_REG(0, 0);
+; loptr <<= 3;
+; hiptr = hibase + offset;
+;
+; *loptr = entry;
+; *hiptr = 0;
+;
+;
+; }
+
+; void css_set_aarch64(unsigned cluster, unsigned core, int8_t aarch64) {
+; offset = cluster << 4;
+;
+; base = DEV_CPUCFG;
+;
+; ptr = base + offset;
+; bit = core + 24;
+; reg = *ptr;
+; aarch64 <<= 24;
+;
+;
+;
+; mask = BIT(bit);
+; aarch64 >>= 24; // sign extend to 32 bits
+; mask = ~mask;
+; set = aarch64 << bit;
+; reg &= mask;
+;
+;
+; reg |= set;
+;
+;
+; *ptr = reg;
+; reg = *ptr;
+;
+;
+;
+; }
+
+; int css_power_on_cluster(int entry) {
+;
+;
+;
+;
+;
+;
+;
+;
+; css_set_power_switch(0, 0, 1);
+; reg = BIT(0);
+; rtc_set_pwrstate(0x0000b006);
+;
+;
+; prcm_set_gating(1, 0);
+;
+; timer_udelay(1);
+;
+; rtc_set_pwrstate(0x0000b007);
+;
+;
+; ptr = 0x01f01d40 [R_CPUCFG_SYS_RESET_REG];
+; *ptr = reg;
+;
+; css_set_core_reset(0, 0); // assert cpu0 reset
+;
+; css_set_cluster_reset(0); // assert cluster resets
+;
+; rtc_set_pwrstate(0x0000b008);
+;
+; cpu_set_l2rstdisable(0);
+;
+; rtc_set_pwrstate(0x0000b009);
+;
+; css_set_acinactm(0); // enable snooping
+;
+; rtc_set_pwrstate(0x0000b00a);
+;
+; css_set_cluster_reset(1); // release cluster resets
+;
+;
+; css_set_rvbar(entry, 0);
+;
+;
+;
+; css_set_aarch64(0, 0, 1);
+;
+; rtc_set_pwrstate(0x0000b00b);
+;
+;
+; ret = 0;
+;
+;
+; return ret;
+; }
 
 
 
@@ -7106,6 +7106,24 @@
 
 
 
+; void func_0000adbc(void) {
+;
+;
+; prcm = DEV_R_PRCM;
+; prcm_ptr = 0x00013948;
+;
+;
+; *prcm_ptr = prcm;
+;
+; ccu = DEV_CCU;
+; ccu_ptr = 0x00013944;
+;
+; *ccu_ptr = ccu;
+;
+; ccu_pll_periph0 = DEV_CCU + CCU_PLL_PERIPH0_REG;
+; ccu_pll_periph0_ptr = 0x0001393c;
+; *ccu_pll_periph0_ptr = ccu_pll_periph0;
+; ret = func_0000bf88(11);
 
 
 
@@ -7859,6 +7877,93 @@
 
 
 
+; int prcm_set_gating(unsigned index, unsigned enable) {
+;
+;
+; // 15 entries in jump table
+;
+;
+;
+;
+; // jump table at 0x00012b68
+;
+;
+; switch (index) {
+;
+; case 1:
+;     value = (bool)enable;
+;     prcm_ptr = 0x00013948;
+;     mask = ~BIT(0);
+;     prcm = *prcm_ptr;
+;     reg = *(prcm + R_PRCM_PWROFF_GATING_REG(0));
+;     reg &= mask;
+;     goto w1;
+; case 2:
+;     value = (bool)enable;
+;     prcm_ptr = 0x00013948;
+;     value <<= 1;
+;     prcm = *prcm_ptr;
+;     mask = ~BIT(1);
+;     reg = *(prcm + R_PRCM_PWROFF_GATING_REG(0));
+;     reg &= mask;
+; w1: reg |= value;
+;     *(prcm + R_PRCM_PWROFF_GATING_REG(0)) = reg;
+;     ret = 0;
+;     break;
+; case 3:
+;     value = (bool)enable;
+;     prcm_ptr = 0x00013948;
+;     value <<= 2;
+;     prcm = *prcm_ptr;
+;     mask = ~BIT(2);
+;     reg = *(prcm + R_PRCM_PWROFF_GATING_REG(0));
+;     reg &= mask;
+;     goto w1;
+; case 4:
+;     value = (bool)enable;
+;     prcm_ptr = 0x00013948;
+;     value <<= 3;
+;     prcm = *prcm_ptr;
+;     mask = ~BIT(3);
+;     reg = *(prcm + R_PRCM_PWROFF_GATING_REG(0));
+;     reg &= mask;
+;     goto w1;
+; case 11:
+;     value = (bool)enable;
+;     prcm_ptr = 0x00013948;
+;     value <<= 3;
+;     prcm = *prcm_ptr;
+;     mask = ~BIT(3);
+;     reg = *(prcm + 0x110);
+;     reg &= mask;
+;     goto w2;
+; case 12:
+;     value = (bool)enable;
+;     prcm_ptr = 0x00013948;
+;     value <<= 2;
+;     prcm = *prcm_ptr;
+;     mask = ~BIT(2);
+;     reg = *(prcm + 0x110);
+;     reg &= mask;
+; w2: reg |= value;
+;     *(prcm + 0x110) = reg;
+;     ret = 0;
+;     break;
+; case 15:
+;     mask = ~BIT(1);
+;     prcm_ptr = 0x00013948;
+;     value = (bool)enable;
+;     prcm = *prcm_ptr;
+;     reg = *(prcm + 0x118);
+;     reg &= mask;
+;     reg |= value;
+;     *(prcm + 0x118) = reg;
+;     ret = 0;
+;     break;
+; default: ret = -22;
+; }
+; return ret;
+; }
 
 
 
@@ -8710,158 +8815,53 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; void timer_udelay(int32_t delay) {
+;
+;
+; ptr = 0x000130a0;
+;
+; flag = *ptr;
+; if (flag != 0)
+;     return;
+; if (delay == 0)
+;     return;
+;
+; timer_ptr = 0x00013954;
+; timer = *timer_ptr;
+; freq = timer->freq; // offset 12
+; regs = timer->regs; // offset 24
+; intv = delay * freq;
+; regs->intv = intv;  // offset 4
+; reg = regs->ctrl;   // offset 0
+; reg |= BIT(1);
+; regs->ctrl = reg; // set RTMRx_RELOAD
+; do {reg = regs->ctrl;
+;     reg &= BIT(1);
+; } while (reg != 0); // wait for it to go low
+;
+;
+; bit = timer->channel; // offset 0
+;
+; timer_base_ptr = 0x00013958;
+; mask = BIT(bit);
+; timer_base = *timer_base_ptr;
+; timer_base->irq_status = mask;  // clear pending IRQ
+; reg = regs->ctrl;
+; reg |= BIT(0);
+; regs->ctrl = reg; // set RTMRx_EN
+; do {reg = timer_base->irq_status;
+;     reg &= mask;
+; } while (reg == 0); // wait for the IRQ
+;
+;
+; reg = regs->ctrl;
+;
+; reg &= ~BIT(0);
+; regs->ctrl = reg; // clear RTMRx_EN
+; timer_base->irq_status = mask; // clear pending IRQ
+;
+;
+; }
 
 
 

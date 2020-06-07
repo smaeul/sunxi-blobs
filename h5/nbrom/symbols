@@ -214,7 +214,7 @@
 0x00004d28 load_from_nand
 0x00004d98 $d
 0x00004da0 $a
-0x00004da0 func_4da0
+0x00004da0 memset
 0x00004dcc func_4dcc
 0x00004f5c load_from_sdcard
 0x00005000 load_from_emmc

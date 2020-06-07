@@ -726,6 +726,7 @@
 
 
 
+; ptr = MC_MAER
 
 
 
@@ -741,10 +742,14 @@
 
 
 
+; val = *MC_WORK_MODE
+; udelay(1)
 
 
+; [copy 32 bytes of DRAM to 0x12264]
 
 
+; [starting at 0x40000000]
 
 
 
@@ -757,7 +762,10 @@
 
 
 
+; [copy 32 bytes of DRAM to 0x122e4]
+; [presumably the other channel...]
 
+; [starting at 0x40004000]
 
 
 
@@ -766,109 +774,101 @@
 
 
 
+; udelay(1)
 
 
+; ptr = MC_MAER
+; *MC_MAER = 0
+; udelay(1)
 
+; ptr = PWRCTL
 
+; *PWRCTL |= BIT(8) | BIT(0)
 
+; ptr = STATR
 
 
 
+; while (*STATR & 7 != 3) {}
 
+; ptr = PGCR0
 
 
+; *PGCR0 &= ~GENMASK(27, 26)
+; [possibly WDBVT/RDBVT]
 
 
+; ptr = ACIOCR0
 
 
+; *ACIOCR0 |= 0x40108
 
 
+; ptr = DQSDR
 
 
+; *DQSDR &= ~GENMASK(29, 28)
+; [dunno what this does]
 
+; ptr = DXnGCR0(0)
 
+; *DXnGCR0(0) |= GENMASK(5, 4)
+; [???]
+; ptr = DXnGCR0(1)
 
+; *DXnGCR0(0) |= GENMASK(5, 4)
+; [???]
+; ptr = ZQCR
 
 
+; *ZQCR |= BIT(31) [enable ZQPD]
 
+; udelay(10)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; ptr = VDD_SYS_PWROFF_GATING_REG
+; val = *ptr
+; val |= 3 (enable DRAM pad hold)
+; *ptr = val
+; udelay(10)
+
+
+
+; *CLKEN = 0
+
+; mask = ~BIT(31)
+; ptr = PLL_DDR0_CTRL_REG
+; val = *ptr
+; val &= mask (disable PLL_DDR0)
+
+; *ptr = val
+; ptr = PLL_DDR1_CTRL_REG
+; mask = ~BIT(31)
+; val = *ptr
+; val &= mask (disable PLL_DDR1)
+; *ptr = val
+; udelay(1)
+
+; ptr = DRAM_CFG_REG
+
+; val = *ptr
+; mask = ~BIT(31)
+; val &= mask (assert DRAM module reset)
+; mask = BIT(16)
+; *ptr = val
+; val = *ptr
+; val |= mask (set SDRCLK_UPD bit)
+; mask = ~BIT(14)
+; *ptr = val
+; ptr = BUS_CLOCK_GATING_REG0
+; ptr2 = BUS_RST_REG0
+; val = *ptr
+; val &= mask (disable DRAM bus clock)
+; *ptr = val
+; val = *ptr2
+; val &= mask (assert DRAM bus reset)
+; *ptr2 = val
+; udelay(1)
 
 
 
@@ -1711,11 +1711,11 @@
 
 
 
-
-
-
-
-
+; ptr = VDD_SYS_PWROFF_GATING_REG
+; val = *ptr
+; val &= ~3 (disable DRAM pad hold)
+; *ptr = val
+; udelay(10)
 
 
 
@@ -2720,35 +2720,35 @@
 
 
 
+; var2 = arg1
+; if (arg1 == 0) {
 
 
 
 
+;     printf(1, msg)
+;     msg = 0x00010b47 "clean NMI interrupt pending"
+
+;     var4 = 1
+;     ptr3 = 0x000123a4
+;     ptr3 = *ptr3
+;     *ptr3 = var4 // mmio_write32(R_INTC_BASE + 0x10, 1)
+; }
+; ptr3 = 0x000123a4
+; ptr4 = *ptr3
+; var3 = 1
+; reg = *(ptr4 + 64) // R_INTC_BASE + 0x40
+; set = var3 << var2 // set = BIT(arg1)
+; reg |= set
+; *(ptr4 + 64) = reg
 
 
-
-; msg = 0x00010b47 "clean NMI interrupt pending"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; printf(var3, msg)
 ; msg = 0x00010b64 "intno:%d interrupt enable"
 
 
 
-
+; return 0
 
 
 
@@ -6303,6 +6303,7 @@
 
 
 
+; DEV_R_PRCM + R_PRCM_PLL_CTRL_REG1
 
 
 
@@ -6312,8 +6313,7 @@
 
 
 
-
-
+; delay(20)
 
 
 
@@ -11037,7 +11037,7 @@
 
 
 
-
+; cpucfg_func_00009c00(14, 1)
 
 
 ; rtc_set_pwrstate(0xf3f33005)
@@ -11132,6 +11132,7 @@
 
 
 
+; disable PLL_CPUX
 
 
 
@@ -11730,6 +11731,7 @@
 
 
 
+; finally done disabling clocks!
 
 
 
@@ -11747,25 +11749,23 @@
 
 
 
+; key = 0xa7000000
 
+; ptr = DEV_R_PRCM + R_PRCM_PLL_CTRL_REG1
+; mask = ~GENMASK(1, 0)
+; val = *ptr
+; val |= key
 
 
+; *ptr = val
+; val = *ptr
+; val |= key
 
 
+; val &= mask
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+; *ptr = val
 
 
 
@@ -11777,6 +11777,13 @@
 
 
 
+; cpucfg_func_00009c00(15, 1)
+
+
+; cpucfg_func_00009c00(17, 1)
+
+
+; cpucfg_func_00009c00(18, 1)
 
 
 
@@ -11786,14 +11793,7 @@
 
 
 
-
-
-
-
-
-
-
-
+; cpucfg_func_00009c00(19, 1)
 
 
 
@@ -12241,6 +12241,13 @@
 
 
 
+; cpucfg_func_00009c00(15, 0)
+
+
+; cpucfg_func_00009c00(17, 0)
+
+
+; cpucfg_func_00009c00(18, 0)
 
 
 
@@ -12249,14 +12256,7 @@
 
 
 
-
-
-
-
-
-
-
-
+; cpucfg_func_00009c00(19, 0)
 
 
 
@@ -12718,7 +12718,7 @@
 
 
 
-
+; udelay(100)
 
 
 
@@ -12769,7 +12769,7 @@
 
 
 
-
+; cpucfg_func_00009c00(14, 0)
 
 
 

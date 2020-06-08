@@ -189,6 +189,7 @@
 
 
 
+; msg = 0x00011b7c "WRN:no space for little-endian config"
 
 
 
@@ -351,6 +352,21 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011ba3 "WRN:invalid cluster reset status"
 
 
 
@@ -833,6 +849,24 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011bc5 "ERR:PLL_DDR1 unlocked,system reset needed"
 
 
 
@@ -2387,40 +2421,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ; msg = 0x00011bf0 "ERR:inv msg[%x] rec"
 
 
@@ -2481,6 +2481,7 @@
 
 
 
+; msg = 0x00011bf0 "ERR:inv msg[%x] rec"
 
 
 
@@ -2524,8 +2525,7 @@
 
 
 
-
-
+; msg = 0x00011bf0 "ERR:inv msg[%x] rec"
 
 
 
@@ -2689,7 +2689,7 @@
 
 
 
-
+; msg = 0x00011c05 "ERR:hsyn msg err"
 
 
 
@@ -2847,7 +2847,7 @@
 
 
 
-
+; msg = 0x00011c17 "ERR:inv msg rec"
 
 
 
@@ -2953,7 +2953,7 @@
 
 
 
-
+; msg = 0x00011c28 "ERR:take hwspinlock%d timeout"
 
 
 
@@ -3118,6 +3118,116 @@
 
 
 ; msg = 0x00011c6f "ERR:ISR not installed!"
+
+
+; msg = 0x00011c47 "ERR:irq [%x] enable before ISR install"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011c87 "ERR:ir data full"
+; msg = 0x00011c6f "ERR:ISR not installed!"
+
+
+
+
+
+
+
+
 
 
 
@@ -3319,116 +3429,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ; msg = 0x00011c99 "WRN:read ir fifo raw data failed"
 
 
@@ -3543,6 +3543,7 @@
 
 
 
+; msg = 0x00011c99 "WRN:read ir fifo raw data failed"
 
 
 
@@ -3562,8 +3563,7 @@
 
 
 
-
-
+; msg = 0x00011c99 "WRN:read ir fifo raw data failed"
 
 
 
@@ -3752,14 +3752,14 @@
 
 
 
+; msg = 0x00011cbb "WRN:ir rx fifo full"
 
 
 
 
 
 
-
-
+; msg = 0x00011cd0 "ERR:inv ir rx irq det, st:0x%x"
 
 
 
@@ -4163,6 +4163,7 @@
 
 
 
+; msg = 0x00011cf0 "WRN:invalid power voltage type[%u]"
 
 
 
@@ -4247,6 +4248,7 @@
 
 
 
+; msg = 0x00011cf0 "WRN:invalid power voltage type[%u]"
 
 
 
@@ -4278,9 +4280,7 @@
 
 
 
-
-
-
+; msg = 0x00011d14 "WRN:invalid voltage value[%u] to set, type[%u], the reasonable range[%u-%u]"
 
 
 
@@ -5165,6 +5165,7 @@
 
 
 
+; msg = 0x00011d61 "reset system"
 
 
 
@@ -5222,8 +5223,7 @@
 
 
 
-
-
+; msg = 0x00011d6f "poweroff system"
 
 
 
@@ -5633,6 +5633,7 @@
 
 
 
+; msg = 0x00011d80 "WRN:invaid module clock id (%d) when set source"
 
 
 
@@ -5653,6 +5654,183 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011db1 "ERR:icd %x"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011def "WRN:invaid module clock id (%d) when get divider"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011dbd "WRN:invaid module clock id (%d) when set divider"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011dbd "WRN:invaid module clock id (%d) when set divider"
 
 
 
@@ -5830,187 +6008,9 @@
 
 
 
+
+
 ; msg = 0x00011dbd "WRN:invaid module clock id (%d) when set divider"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -6290,6 +6290,7 @@
 
 
 
+; msg = 0x00011d80 "WRN:invaid module clock id (%d) when set source"
 
 
 
@@ -6420,8 +6421,7 @@
 
 
 
-
-
+; msg = 0x00011e21 "WRN:invaid power control module (%d) when set power-off gating"
 
 
 
@@ -6638,7 +6638,7 @@
 
 
 
-
+; msg = 0x00011e61 "WRN:invaid module clock id (%d) when set reset"
 
 
 
@@ -6759,7 +6759,7 @@
 
 
 
-
+; msg = 0x00011e91 "WRN:invaid clock id (%d) when set freq"
 
 
 
@@ -6874,6 +6874,7 @@
 
 
 
+; msg = 0x00011eb9 "WRN:invalid clock id for get source freq"
 
 
 
@@ -6942,6 +6943,7 @@
 
 
 
+; msg = 0x00011ee3 "ERR:rsb div overflow"
 
 
 
@@ -6961,6 +6963,222 @@
 
 
 
+
+
+
+
+
+
+
+
+; msg = 0x00011f6c "ERR:err datatype %d"
+
+
+
+
+
+
+
+
+
+; msg = 0x00011ef8 "ERR:loading busy"
+
+
+
+
+
+
+
+
+
+; msg = 0x00011f0a "ERR:rsb trans err[%x]"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011f8d "ERR:rsb write failed"
+
+
+
+
+
+; msg = 0x00011fa3 "ERR:write devaddr:%x, regaddr:%x, data:%x, datatype:%x"
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011f21 "ERR:set rtsaddr failed, saddr:%x, rtsaddr:%x"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011f6c "ERR:err datatype %d"
+
+
+
+
+
+
+
+; msg = 0x00011f4f "ERR:rsb set pmu mode failed"
+
+; msg = 0x00011f81 "ERR:data=0"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011fdb "ERR:rsb read failed"
+
+
+
+; msg = 0x00011ff0 "ERR:read devaddr:%x, regaddr:%x, data:%x, datatype:%x"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00012027 "WRN:rsb read reg paras error"
 
 
 
@@ -7046,6 +7264,8 @@
 
 
 
+; msg = 0x00012045 "WRN:rsb write reg paras error"
+
 
 
 
@@ -7113,6 +7333,8 @@
 
 
 ; msg = 0x00011ff0 "ERR:read devaddr:%x, regaddr:%x, data:%x, datatype:%x"
+
+
 
 
 
@@ -7264,231 +7486,9 @@
 
 
 
+
+
 ; msg = 0x00012045 "WRN:rsb write reg paras error"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -7751,6 +7751,7 @@
 
 
 
+; msg = 0x00012064 "WRN:timer irq handler not install"
 
 
 
@@ -7901,8 +7902,7 @@
 
 
 
-
-
+; msg = 0x00012087 "WRN:no free timer now"
 
 
 
@@ -8650,6 +8650,7 @@
 
 
 
+; msg = 0x0001209e "%s :"
 
 
 
@@ -8666,8 +8667,7 @@
 
 
 
-
-
+; msg = 0x000120ae "%8x"
 
 
 
@@ -8953,6 +8953,284 @@
 
 
 
+; msg = 0x000120b3 "ERR:dvfs try to increase voltage failed"
+
+
+
+
+
+
+; msg = 0x0001212c "stack free:%dbyte"
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x000120dc "ERR:current voltage != target voltage"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x0001213f "exception [%x, %s] coming, [epc = %x]"
+
+
+
+
+; msg = 0x00012166 "register list:"
+
+
+
+; msg = 0x00012103 "ERR:dvfs try to decrease voltage failed"
+
+; msg = 0x00012176 "register%x: %x"
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00012186 "cpu abort enter..."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00012280 "WRN:allocate message for init fb failed"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x000122a9 "sun8iw5_v0.03.00-227-gcec3a2b"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -8961,6 +9239,16 @@
 
 
 ; msg = 0x0001212c "stack free:%dbyte"
+
+
+; msg = 0x000122c7 "------------------------------"
+
+
+
+
+
+
+
 
 
 
@@ -9039,6 +9327,14 @@
 
 
 ; msg = 0x00012186 "cpu abort enter..."
+
+
+
+
+; msg = 0x000122ec ""
+
+
+
 
 
 
@@ -9331,315 +9627,19 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 ; msg = 0x000122ec ""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -10046,6 +10046,7 @@
 
 
 
+; msg = 0x000122fd "ERR:allocate message invalid, add:%p"
 
 
 
@@ -10074,8 +10075,7 @@
 
 
 
-
-
+; msg = 0x00012323 "WRN:free invalid message"
 
 
 
@@ -10331,6 +10331,7 @@
 
 
 
+; msg = 0x0001233d "ERR:invalid message type [%x]"
 
 
 
@@ -10441,8 +10442,7 @@
 
 
 
-
-
+; msg = 0x00012360 "WRN:allocate notifier failed"
 
 
 
@@ -11358,6 +11358,7 @@
 
 
 
+; msg = 0x0001110c "ERR:extended_standby > standby_size/2"
 
 
 
@@ -11368,8 +11369,7 @@
 
 
 
-
-
+; msg = 0x00011133 "%x enter"
 
 
 
@@ -12279,6 +12279,7 @@
 
 
 
+; msg = 0x0001113d "ERR:estif"
 
 
 
@@ -12326,6 +12327,7 @@
 
 
 
+; msg = 0x00011148 "wait wakeup event coming"
 
 
 
@@ -12549,6 +12551,7 @@
 
 
 
+; msg = 0x00011162 "ERR:set pllddr1 err"
 
 
 
@@ -12592,10 +12595,7 @@
 
 
 
-
-
-
-
+; msg = 0x00011177 "ERR:try to fix PLL_DDR1 failed, reboot system"
 
 
 
@@ -13172,6 +13172,370 @@
 ; msg = 0x00011229 "cpu0 enter wfi now, wait [%d] ms"
 
 
+; msg = 0x000111a6 "ERR:dram crc error..."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x000111bd "wait ac327 resume..."
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x0001124b "reset system now"
+
+
+
+
+
+; msg = 0x000111d3 "ERR:esstandby ignore message [%x, %x]"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x000111fa "%x return"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011205 "WRN:invaid system power state (%d)"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; msg = 0x00011229 "cpu0 enter wfi now, wait [%d] ms"
+
+
 
 
 
@@ -13235,6 +13599,48 @@
 
 
 ; msg = 0x0001124b "reset system now"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

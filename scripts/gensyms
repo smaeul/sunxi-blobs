@@ -35,26 +35,29 @@ warn() {
   printf 'warning: %s\n' "$*" >&2
 }
 
-if [ "$(stat -c %s "$symbols" || echo 0)" -gt 0 ]; then
-  warn "Existing symbols for ${dir} would be overwritten! Quitting."
-  exit 1
-fi
-
 # Ensure the disassembled file exists
 make "$assembly"
 
 # Add ARM interleaved instruction/immediate data marker
 if test "$ARCH" = "arm"; then
-  grep -m1 'text$' "$sections" | sed 's/text/$a/' > "$symbols"
+  grep -m1 'text$' "$sections" | sed 's/text/$a/' >> "$symbols"
 fi
+
+# Merge the symbols
+sort -go "$symbols" -u "$symbols"
 
 # Add all normally-called functions
 grep "${CALL_INSN}\s[[:xdigit:]]" "$assembly" |
 sed "s/^.*${CALL_INSN}\s//" |
 sort -gu |
-while read -r addr; do
+while read -r addr dummy; do
+  { printf "$addr" | grep -q "^0x"; } || addr=0x${addr}
+  grep -q "$(printf '^0x%08x' "$addr")" "$symbols" && continue
   printf '0x%08x func_%08x\n' "$addr" "$addr"
 done >> "$symbols"
+
+# Merge the symbols
+sort -go "$symbols" -u "$symbols"
 
 # Update the disassembly
 make "$assembly"
@@ -65,7 +68,9 @@ if test -n "$TAIL_INSN"; then
   grep "${TAIL_INSN}\s[[:xdigit:]]" |
   sed "s/^.*${TAIL_INSN}\s\([[:xdigit:]]\+\)\s.*$/0x\1/" |
   sort -gu |
-  while read -r addr; do
+  while read -r addr dummy; do
+    { printf "$addr" | grep -q "^0x"; } || addr=0x${addr}
+    grep -q "$(printf '^0x%08x' "$addr")" "$symbols" && continue
     printf '0x%08x func_%08x\n' "$addr" "$addr"
   done >> "$symbols"
 fi

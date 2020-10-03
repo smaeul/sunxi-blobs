@@ -13,12 +13,12 @@ CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
 # Generated, but might need adjustment
 case "$ARCH" in
   arm)
-    CALL_INSN='\(bl\|blx\)'
+    CALL_INSN='(bl|blx)'
     TAIL_INSN=
     ;;
   or1k)
-    CALL_INSN=l.jal
-    TAIL_INSN=l.j
+    CALL_INSN='l\.jal'
+    TAIL_INSN='l\.j'
     ;;
 esac
 
@@ -47,8 +47,8 @@ fi
 sort -go "$symbols" -u "$symbols"
 
 # Add all normally-called functions
-grep "${CALL_INSN}\s[[:xdigit:]]" "$assembly" |
-sed "s/^.*${CALL_INSN}\s//" |
+grep -E "${CALL_INSN}\s(0x)?[[:xdigit:]]{2,}" "$assembly" |
+sed -E "s/^.*${CALL_INSN}\s//" |
 sort -gu |
 while read -r addr dummy; do
   { printf "$addr" | grep -q "^0x"; } || addr=0x${addr}

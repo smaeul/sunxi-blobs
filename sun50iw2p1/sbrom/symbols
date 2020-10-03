@@ -145,3 +145,14 @@
 0x000080ac func_000080ac
 0x000080d8 func_000080d8
 0x00008184 $d
+0x000081a4 $a
+0x000081a4 monitor_reset
+0x000081a8 monitor_undefined_instruction
+0x000081ac monitor_software_interrupt
+0x000081b0 monitor_prefetch_abort
+0x000081b4 monitor_data_abort
+0x000081b8 monitor_reserved
+0x000081bc monitor_irq
+0x000081c0 monitor_fiq
+0x000081c4 monitor_hang
+0x000081c8 func_000081c8

@@ -1,0 +1,8 @@
+0x00000000 $a
+0x00000004 undefined_instruction
+0x00000008 software_interrupt
+0x0000000c prefetch_abort
+0x00000010 data_abort
+0x00000014 reserved
+0x00000018 irq
+0x0000001c fiq

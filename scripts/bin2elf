@@ -21,7 +21,11 @@ case "$ARCH" in
   *)    WORDSIZE=32 ;;
 esac
 case "$ARCH" in
-  arm)  BFDNAME=elf${WORDSIZE}-${ENDIANNESS}${ARCH} ;;
+  riscv*) ARCH=riscv ;;
+esac
+case "$ARCH" in
+  arm|riscv)
+        BFDNAME=elf${WORDSIZE}-${ENDIANNESS}${ARCH} ;;
   *)    BFDNAME=elf${WORDSIZE}-${ARCH} ;;
 esac
 

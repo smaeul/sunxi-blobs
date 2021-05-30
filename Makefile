@@ -3,9 +3,15 @@
 # See LICENSE in the project directory for license terms.
 #
 
+ARCH_arisc	 = or1k
+ARCH_nbrom	 = arm
+ARCH_rvbrom	 = riscv64
+ARCH_sbrom	 = arm
+
 CROSS_aarch64	 = aarch64-linux-musl-
 CROSS_arm	 = arm-linux-musleabi-
 CROSS_or1k	 = or1k-linux-musl-
+CROSS_riscv64	 = riscv64-linux-musl-
 
 BLOB		?= */*
 BLOBS		 = $(sort $(wildcard $(BLOB)/blob.hex))
@@ -16,7 +22,7 @@ OUTPUT		 = $(foreach d,$(DIRS),$(d)annotated.s $(d)blob.s $(d)callgraph.svg)
 SECTIONS	 = $(addsuffix sections,$(DIRS))
 SYMBOLS		 = $(addsuffix symbols,$(DIRS))
 
-arch		 = $(if $(findstring arisc,$(lastword $(1:/= ))),or1k,arm)
+arch		 = $(ARCH_$(firstword $(subst _, ,$(notdir $1))))
 cross_compile	 = $(CROSS_$(call arch,$(1)))
 env		 = env ARCH=$(call arch,$(1)) CROSS_COMPILE=$(call cross_compile,$(1))
 

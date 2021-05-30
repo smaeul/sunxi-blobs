@@ -13,13 +13,16 @@ CROSS_COMPILE=${CROSS_COMPILE:-${ARCH}-linux-musl-}
 # Generated, but might need adjustment
 case "$ARCH" in
   arm)
-    CALL_INSN=bl
-    TAIL_INSN=b
+    CALL_INSN="bl "
+    TAIL_INSN="b "
     ;;
   or1k)
-    CALL_INSN=l.jal
-    TAIL_INSN=l.j
+    CALL_INSN="l.jal "
+    TAIL_INSN="l.j "
     ;;
+  riscv*)
+    CALL_INSN="jal ra,"
+    TAIL_INSN="j "
 esac
 
 # Command-line parameters
@@ -39,17 +42,17 @@ strict digraph calls {
 EOF
 grep -F -e '>:' -e "$CALL_INSN" -e "$TAIL_INSN" "$input_file" |
 while read -r line; do
-  if [[ $line =~ ^[[:xdigit:]]{8}\ \<([[:alnum:]_]+)\>:$ ]]; then
+  if [[ $line =~ ^[[:xdigit:]]{8,16}\ \<([[:alnum:]_]+)\>:$ ]]; then
     caller=${BASH_REMATCH[1]}
     [[ $caller =~ ^__.+si3$ || $caller =~ ^nop_ ]] && continue
     printf '  %s\n' "$caller" >> "$output_file"
-  elif [[ $line =~ ^.*\ ${CALL_INSN}\ +[[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+  elif [[ $line =~ ^.*\ ${CALL_INSN}+[[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
     callee=${BASH_REMATCH[1]}
-    [[ $callee =~ ^__.+si3$ || $callee =~ printf$ ]] && continue
+    [[ $callee =~ ^__.+si3$ || $callee =~ printf$ || $callee =~ pwrstate$ ]] && continue
     printf '  %s -> %s\n' "$caller" "$callee" >> "$output_file"
-  elif [[ $line =~ ^.*\ ${TAIL_INSN}\ +[[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
+  elif [[ $line =~ ^.*\ ${TAIL_INSN}+[[:xdigit:]]+\ \<([[:alnum:]_]+)\>$ ]]; then
     callee=${BASH_REMATCH[1]}
-    [[ $callee =~ ^__.+si3$ || $callee =~ printf$ ]] && continue
+    [[ $callee =~ ^__.+si3$ || $callee =~ printf$ || $callee =~ pwrstate$ ]] && continue
     printf '  %s -> %s [style = dashed]\n' "$caller" "$callee" >> "$output_file"
   fi
 done

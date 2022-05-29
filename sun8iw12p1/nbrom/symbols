@@ -1,0 +1,14 @@
+0x00000000 $a
+0x00000000 reset
+0x00000004 undefined_instruction
+0x00000008 software_interrupt
+0x0000000c prefetch_abort
+0x00000010 data_abort
+0x00000014 reserved
+0x00000018 irq
+0x0000001c fiq
+0x00000020 fel_entry
+0x00000024 hang
+0x00000028 start
+0x00000060 fel_irq_handler
+0x00000070 fel_start

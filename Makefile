@@ -4,6 +4,7 @@
 #
 
 ARCH_arisc	 = or1k
+ARCH_mbrom	 = arm
 ARCH_nbrom	 = arm
 ARCH_rvbrom	 = riscv64
 ARCH_sbrom	 = arm
